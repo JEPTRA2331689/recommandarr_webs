@@ -97,7 +97,7 @@ export default function PreparingPage() {
   const { accessKey: storedKey, _hasHydrated, setToken } = useAppStore();
   const [steps, setSteps] = useState<Step[]>(INITIAL_STEPS);
   const [accessKey, setLocalAccessKey] = useState<string | null>(null);
-  const [libraryCount, setLibraryCount] = useState(0);
+  const [libraryCount] = useState(0);
   const [allDone, setAllDone] = useState(false);
   const [fatalError, setFatalError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -128,7 +128,6 @@ export default function PreparingPage() {
     async function run() {
       // ── Étape 1 : Login ──────────────────────────────────────
       setStep("login", "running");
-      await delay(400);
       try {
         const result = await api.post<BetaLoginResult>(
           "/api/beta/login",
@@ -144,36 +143,29 @@ export default function PreparingPage() {
       }
 
       // ── Étape 2 : Construction du profil ─────────────────────
-      await delay(300);
+      await delay(600);
       setStep("profile", "running");
       try {
         await api.post("/api/recommendations/profile/update");
         setStep("profile", "done");
       } catch {
-        // Non-bloquant : le profil peut se construire en arrière-plan
-        setStep("profile", "done");
+        setStep("profile", "error");
       }
 
       // ── Étape 3 : Premier Discover ────────────────────────────
-      await delay(200);
+      await delay(600);
       setStep("discover", "running");
       try {
-        // Charge les reco home pour "préchauffer" le cache
-        const sections = await api.get<{ movies: { id: string }[] }[]>(
-          "/api/recommendations/home?countPerSection=5&availability=All"
-        );
-        const total = sections?.reduce((acc, s) => acc + (s.movies?.length ?? 0), 0) ?? 0;
-        setLibraryCount(total);
+        await api.post("/api/recommendations/discover");
         setStep("discover", "done");
       } catch {
-        // Non-bloquant
-        setStep("discover", "done");
+        setStep("discover", "error");
       }
 
       // ── Étape 4 : Prêt ───────────────────────────────────────
-      await delay(200);
-      setStep("ready", "running");
       await delay(600);
+      setStep("ready", "running");
+      await delay(800);
       setStep("ready", "done");
       setAllDone(true);
     }
