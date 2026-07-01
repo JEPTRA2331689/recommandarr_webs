@@ -113,6 +113,11 @@ function ActionCard({
 export default function AccountPage() {
   const router = useRouter();
   const { accessKey, logout, clearToken } = useAppStore();
+
+  function handleLogout() {
+    clearToken();
+    router.replace("/");
+  }
   const { ready } = useAuthGuard(true);
   const [metrics, setMetrics] = useState<EngineMetrics | null>(null);
   const [actions, setActions] = useState<Action[]>(
@@ -199,6 +204,12 @@ export default function AccountPage() {
             <Link href="/swipe" className="rounded-button px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
               Swipe
             </Link>
+            <button
+              onClick={handleLogout}
+              className="rounded-button border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-error/40 hover:text-error transition-colors"
+            >
+              Déconnexion
+            </button>
           </nav>
         </div>
       </header>

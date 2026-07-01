@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { useAppStore } from "@/lib/store";
 import type { EngineMetrics, BetaKeyStats } from "@/types";
 
 // ── Scroll reveal (IntersectionObserver, aucune lib) ─────────────────────────
@@ -266,8 +268,24 @@ function IcoX() {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
+  const router = useRouter();
+  const { token, _hasHydrated } = useAppStore();
   const [metrics, setMetrics] = useState<EngineMetrics | null>(null);
   const [betaStats, setBetaStats] = useState<BetaKeyStats | null>(null);
+
+  // Après hydration, si l'utilisateur a un token valide on sait qu'il est connecté
+  const isLoggedIn = _hasHydrated && !!token;
+
+  function ctaHref() {
+    return isLoggedIn ? "/recommendations" : "/onboarding";
+  }
+  function ctaLabel(loggedInLabel: string, guestLabel: string) {
+    return isLoggedIn ? loggedInLabel : guestLabel;
+  }
+  function handleCta(e: React.MouseEvent) {
+    e.preventDefault();
+    router.push(ctaHref());
+  }
 
   useEffect(() => {
     api.get<EngineMetrics>("/api/metrics/engine", { skipAuth: true }).then(setMetrics).catch(() => {});
@@ -287,15 +305,26 @@ export default function LandingPage() {
             Swipe<span className="text-secondary">Film</span>
           </span>
           <div className="flex items-center gap-3">
-            <span className="hidden rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-secondary sm:flex">
-              Beta fermée
-            </span>
-            <Link
-              href="/onboarding"
-              className="cursor-pointer rounded-[8px] bg-primary px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90"
-            >
-              Rejoindre →
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/recommendations"
+                className="cursor-pointer rounded-[8px] bg-primary px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90"
+              >
+                Mes recommandations →
+              </Link>
+            ) : (
+              <>
+                <span className="hidden rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-secondary sm:flex">
+                  Beta fermée
+                </span>
+                <Link
+                  href="/onboarding"
+                  className="cursor-pointer rounded-[8px] bg-primary px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90"
+                >
+                  Rejoindre →
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -350,12 +379,12 @@ export default function LandingPage() {
 
             {/* CTAs */}
             <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="/onboarding"
+              <button
+                onClick={handleCta}
                 className="cursor-pointer rounded-[8px] bg-primary px-8 py-4 text-base font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90"
               >
-                Rejoindre la beta →
-              </Link>
+                {ctaLabel("Voir mes recommandations →", "Rejoindre la beta →")}
+              </button>
               <a
                 href="#how"
                 className="cursor-pointer rounded-[8px] border border-white/[0.1] bg-white/[0.04] px-8 py-4 text-base font-medium text-text-secondary backdrop-blur-sm transition-colors hover:bg-white/[0.07] hover:text-text-primary"
@@ -441,12 +470,12 @@ export default function LandingPage() {
                   Après l'import, tu reçois une <strong className="font-semibold text-secondary">clé unique XXXX-YYYY</strong>.
                   C'est ton seul identifiant — non rattachable à une identité réelle.
                 </p>
-                <Link
-                  href="/onboarding"
+                <button
+                  onClick={handleCta}
                   className="cursor-pointer mt-7 inline-block rounded-[8px] bg-primary px-7 py-3.5 text-sm font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90"
                 >
-                  Demander l'accès →
-                </Link>
+                  {ctaLabel("Accéder à mes recommandations →", "Demander l'accès →")}
+                </button>
               </FadeIn>
 
               <div className="space-y-3">
@@ -665,14 +694,16 @@ export default function LandingPage() {
             <p className="mt-4 text-text-secondary">
               Connecte ta bibliothèque Jellyfin ou Plex, reçois ta clé unique — et commence à swiper dans la minute.
             </p>
-            <Link
-              href="/onboarding"
+            <button
+              onClick={handleCta}
               className="cursor-pointer mt-8 inline-block rounded-[8px] bg-primary px-10 py-4 text-base font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90"
             >
-              Rejoindre la beta →
-            </Link>
+              {ctaLabel("Voir mes recommandations →", "Rejoindre la beta →")}
+            </button>
             <p className="mt-5 text-xs text-text-secondary/70">
-              Un email pour éviter les abus · Clé unique XXXX-YYYY · Aucun mot de passe SwipeFilm
+              {isLoggedIn
+                ? "Tu es connecté · Swipe, découvre, profite."
+                : "Un email pour éviter les abus · Clé unique XXXX-YYYY · Aucun mot de passe SwipeFilm"}
             </p>
           </FadeIn>
         </section>

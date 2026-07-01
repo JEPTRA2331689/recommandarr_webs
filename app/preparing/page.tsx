@@ -154,6 +154,7 @@ export default function PreparingPage() {
         setStep("profile", "done");
       } catch {
         setStep("profile", "error");
+        return;
       }
 
       // ── Étape 3 : Premier Discover ────────────────────────────
@@ -164,6 +165,7 @@ export default function PreparingPage() {
         setStep("discover", "done");
       } catch {
         setStep("discover", "error");
+        return;
       }
 
       // ── Étape 4 : Prêt ───────────────────────────────────────
