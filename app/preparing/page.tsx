@@ -113,6 +113,10 @@ export default function PreparingPage() {
     return new Promise((r) => setTimeout(r, ms));
   }
 
+  function tick() {
+    return new Promise<void>((r) => setTimeout(r, 0));
+  }
+
   useEffect(() => {
     if (!_hasHydrated) return;
     if (ran.current) return;
@@ -143,7 +147,7 @@ export default function PreparingPage() {
       }
 
       // ── Étape 2 : Construction du profil ─────────────────────
-      await delay(600);
+      await tick(); // laisse React rendre "login: done" avant de continuer
       setStep("profile", "running");
       try {
         await api.post("/api/recommendations/profile/update");
@@ -153,7 +157,7 @@ export default function PreparingPage() {
       }
 
       // ── Étape 3 : Premier Discover ────────────────────────────
-      await delay(600);
+      await tick();
       setStep("discover", "running");
       try {
         await api.post("/api/recommendations/discover");
@@ -163,9 +167,9 @@ export default function PreparingPage() {
       }
 
       // ── Étape 4 : Prêt ───────────────────────────────────────
-      await delay(600);
+      await tick();
       setStep("ready", "running");
-      await delay(800);
+      await delay(500); // pas d'appel API — délai minimal pour l'UX
       setStep("ready", "done");
       setAllDone(true);
     }
