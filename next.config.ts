@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/backend/:path*",
-        destination: "https://recommandarr-production.up.railway.app/api/:path*",
+        destination: "https://recommandarr-production.up.railway.app/:path*",
       },
     ];
   },
