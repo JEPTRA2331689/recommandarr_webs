@@ -32,14 +32,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "image.tmdb.org" },
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: "/api/backend/:path*",
-        destination: "https://recommandarr-production.up.railway.app/:path*",
-      },
-    ];
-  },
   async headers() {
     return [
       {
