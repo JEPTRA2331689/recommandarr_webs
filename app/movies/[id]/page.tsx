@@ -194,6 +194,7 @@ export default function MovieDetailPage() {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [credits, setCredits] = useState<{ name: string; character: string; photo: string | null }[]>([]);
 
   // Swipe flow
   const [pendingDir, setPendingDir] = useState<"like" | "skip" | null>(null);
@@ -204,7 +205,16 @@ export default function MovieDetailPage() {
     if (!ready) return;
     swipeStart.current = Date.now();
     api.get<Movie>(`/api/movies/${id}`)
-      .then(setMovie)
+      .then((m) => {
+        setMovie(m);
+        const lang = navigator.language || "en-US";
+        fetch(`/api/tmdb/credits?id=${m.tmdbId}&language=${encodeURIComponent(lang)}`)
+          .then((r) => (r.ok ? r.json() : { cast: [] }))
+          .then((data: { cast?: { name: string; character: string; photo: string | null }[] }) =>
+            setCredits(data.cast ?? [])
+          )
+          .catch(() => {});
+      })
       .catch(() => setError("Film introuvable."))
       .finally(() => setLoading(false));
   }, [ready, id]);
@@ -391,15 +401,29 @@ export default function MovieDetailPage() {
             <div className="mt-8 border-t border-border/40" />
             <div className="mt-6">
               <p className="text-[clamp(1rem,2vw+0.5rem,2rem)] font-semibold text-text-primary mb-4">Cast</p>
-              <div className="flex flex-wrap gap-3">
-                {movie.castTop5!.map((name) => (
-                  <div key={name} className="flex items-center gap-2 rounded-card border border-border bg-surface px-3 py-2">
-                    <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-surface-alt border border-border text-xs font-semibold text-text-secondary">
-                      {name[0]}
+              <div className="flex flex-wrap gap-4">
+                {movie.castTop5!.map((name) => {
+                  const credit = credits.find((c) => c.name === name);
+                  return (
+                    <div key={name} className="flex flex-col items-center gap-2 w-[72px] text-center">
+                      {credit?.photo ? (
+                        <img
+                          src={credit.photo}
+                          alt={name}
+                          className="h-16 w-16 rounded-full border border-white/10 object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-surface-alt text-lg font-semibold text-text-secondary">
+                          {name[0]}
+                        </div>
+                      )}
+                      <span className="text-xs leading-tight text-text-primary">{name}</span>
+                      {credit?.character && (
+                        <span className="text-[10px] leading-tight text-text-secondary/70 line-clamp-1">{credit.character}</span>
+                      )}
                     </div>
-                    <span className="text-sm text-text-primary">{name}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </>

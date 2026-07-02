@@ -83,7 +83,7 @@ function JellyfinLinkBuilder({ onUrlReady }: { onUrlReady: (url: string) => void
             <ol className="text-xs text-text-secondary space-y-0.5 list-decimal list-inside mb-2">
               <li>Tableau de bord → <strong className="text-text-primary">Clés API</strong> (section Avancé)</li>
               <li>Clique <strong className="text-text-primary">+ Nouvelle clé</strong></li>
-              <li>Nom : <code className="text-secondary">SwipeFilm</code> → confirme</li>
+              <li>Nom : <code className="text-secondary">Recommandarr</code> → confirme</li>
               <li>Copie la clé générée</li>
             </ol>
             <input

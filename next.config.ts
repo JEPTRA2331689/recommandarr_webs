@@ -19,7 +19,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval nécessaire pour Next.js dev/Turbopack
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: https://image.tmdb.org",
+      "img-src 'self' data: https://image.tmdb.org https://cdn.simpleicons.org",
       "connect-src 'self' https://localhost:7148 http://localhost:7148 https://recommandarr-production.up.railway.app",
       "frame-ancestors 'none'",
     ].join("; "),

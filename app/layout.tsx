@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SwipeFilm — Recommandations personnalisées",
-  description: "Moteur de recommandation de films basé sur ta bibliothèque Jellyfin. Beta fermée.",
+  title: "Recommandarr — Recommandations personnalisées",
+  description: "Moteur de recommandation de films basé sur ta bibliothèque Jellyfin ou Plex. Beta fermée.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
