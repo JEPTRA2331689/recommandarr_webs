@@ -26,10 +26,10 @@ function posterUrl(path: string | null, size = "w500"): string {
 
 // ── Icônes ────────────────────────────────────────────────────────────────────
 
-function IcoPlay({ className }: { className?: string }) {
+function IcoSearch() {
   return (
-    <svg className={cn("h-5 w-5 ml-0.5", className)} fill="currentColor" viewBox="0 0 24 24">
-      <path d="M8 5v14l11-7z" />
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
     </svg>
   );
 }
@@ -42,15 +42,15 @@ function IcoInfo() {
   );
 }
 
-function IcoSearch() {
+function IcoPlay() {
   return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+    <svg className="h-5 w-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7z" />
     </svg>
   );
 }
 
-// ── Carte film paysage (16:9) ─────────────────────────────────────────────────
+// ── Carte poster (2:3) ────────────────────────────────────────────────────────
 
 function MovieCard({ movie, onOpen }: { movie: Movie; onOpen: (id: string) => void }) {
   const [imgError, setImgError] = useState(false);
@@ -62,82 +62,72 @@ function MovieCard({ movie, onOpen }: { movie: Movie; onOpen: (id: string) => vo
       tabIndex={0}
       onClick={() => onOpen(movie.id)}
       onKeyDown={(e) => e.key === "Enter" && onOpen(movie.id)}
-      className="group relative flex-shrink-0 w-[220px] md:w-[260px] lg:w-[290px] cursor-pointer snap-start"
+      className="group relative flex-shrink-0 w-[140px] md:w-[165px] lg:w-[185px] cursor-pointer snap-start"
     >
-      {/* Zone image paysage */}
-      <div className="relative aspect-video overflow-hidden rounded-[6px] bg-[#1c1c1c] transition-all duration-200 group-hover:scale-[1.04] group-hover:shadow-[0_20px_60px_rgba(0,0,0,0.9)] group-hover:z-10">
+      {/* Poster 2:3 */}
+      <div className="relative aspect-[2/3] overflow-hidden rounded-card bg-surface transition-all duration-200 group-hover:scale-[1.03] group-hover:shadow-[0_16px_40px_rgba(0,0,0,0.7)] group-hover:ring-1 group-hover:ring-secondary/40">
 
         {url && !imgError ? (
           <Image
             src={url}
             alt={movie.title}
             fill
-            className="object-cover object-top"
-            sizes="(max-width: 768px) 240px, 300px"
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 150px, (max-width: 1024px) 170px, 190px"
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="flex h-full items-center justify-center">
-            <svg className="h-10 w-10 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex h-full flex-col items-center justify-center gap-2 bg-surface-alt px-3 text-center">
+            <svg className="h-8 w-8 text-text-secondary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25z" />
             </svg>
+            <span className="text-[10px] font-medium text-text-secondary line-clamp-3">{movie.title}</span>
           </div>
         )}
 
-        {/* Gradient bas */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/5 to-transparent" />
+        {/* Gradient bas pour lisibilité du titre */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
 
-        {/* Badges */}
+        {/* Badge score */}
         {movie.score != null && (
-          <div className="absolute top-2 right-2 rounded-[4px] bg-secondary px-1.5 py-0.5 text-[10px] font-bold text-bg-primary">
+          <div className="absolute top-2 right-2 rounded-pill bg-secondary px-1.5 py-0.5 text-[10px] font-bold text-bg-primary">
             {(movie.score * 100).toFixed(0)}%
           </div>
         )}
+
+        {/* Badge disponible */}
         {movie.isAvailable && (
-          <div className="absolute top-2 left-2 rounded-full bg-success/90 px-2 py-0.5 text-[10px] font-semibold text-bg-primary">
+          <div className="absolute top-2 left-2 rounded-pill bg-success/90 px-2 py-0.5 text-[10px] font-semibold text-bg-primary">
             Dispo
           </div>
         )}
 
-        {/* Bouton play au hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-2xl">
-            <IcoPlay className="text-black" />
-          </div>
-        </div>
-
-        {/* Titre + meta en bas */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-white drop-shadow-md line-clamp-1">
+        {/* Titre en bas */}
+        <div className="absolute bottom-0 left-0 right-0 p-2.5">
+          <p className="text-[11px] font-semibold text-text-primary drop-shadow-md line-clamp-2 leading-tight">
             {movie.title}
           </p>
-          <div className="mt-0.5 flex items-center gap-1.5">
-            {movie.releaseDate && (
-              <span className="text-[10px] text-white/50">{movie.releaseDate.slice(0, 4)}</span>
-            )}
-            {movie.tmdbRating > 0 && (
-              <>
-                <span className="text-white/30 text-[10px]">·</span>
-                <span className="text-[10px] text-warning">★ {movie.tmdbRating.toFixed(1)}</span>
-              </>
-            )}
-          </div>
+          {movie.releaseDate && (
+            <p className="mt-0.5 text-[10px] text-text-secondary/80">
+              {movie.releaseDate.slice(0, 4)}
+            </p>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-// ── Rangée horizontale ────────────────────────────────────────────────────────
+// ── Rangée horizontale scrollable ─────────────────────────────────────────────
 
 function SectionRow({ section, onOpen }: { section: HomeSection; onOpen: (id: string) => void }) {
   return (
     <div className="mb-10">
-      <h2 className="mb-3 px-6 md:px-12 text-base font-semibold text-white tracking-wide">
+      <h2 className="mb-3 px-6 md:px-12 text-base font-semibold text-text-primary tracking-wide font-display">
         {section.title}
       </h2>
       <div
-        className="flex gap-2.5 overflow-x-auto px-6 md:px-12 pb-3 snap-x snap-mandatory"
+        className="flex gap-3 overflow-x-auto px-6 md:px-12 pb-3 snap-x snap-mandatory"
         style={{ scrollbarWidth: "none" }}
       >
         {section.movies.map((movie) => (
@@ -152,16 +142,16 @@ function SectionRow({ section, onOpen }: { section: HomeSection; onOpen: (id: st
 
 function HeroSkeleton() {
   return (
-    <div className="relative min-h-[68vh] flex items-end overflow-hidden bg-[#111]">
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent" />
+    <div className="relative min-h-[65vh] flex items-end overflow-hidden bg-surface">
+      <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/30 to-transparent" />
       <div className="relative z-10 px-6 pb-12 pt-32 md:px-12 md:pb-16 space-y-4 w-full max-w-lg">
-        <div className="h-3 w-24 rounded bg-white/10 animate-pulse" />
-        <div className="h-12 w-80 rounded bg-white/10 animate-pulse" />
-        <div className="h-4 w-48 rounded bg-white/10 animate-pulse" />
-        <div className="h-16 w-72 rounded bg-white/10 animate-pulse" />
+        <div className="h-3 w-20 rounded-pill bg-surface-alt animate-pulse" />
+        <div className="h-10 w-72 rounded-card bg-surface-alt animate-pulse" />
+        <div className="h-3 w-44 rounded-pill bg-surface-alt animate-pulse" />
+        <div className="h-14 w-64 rounded-card bg-surface-alt animate-pulse" />
         <div className="flex gap-3 pt-2">
-          <div className="h-11 w-32 rounded-[6px] bg-white/10 animate-pulse" />
-          <div className="h-10 w-10 rounded-full bg-white/10 animate-pulse" />
+          <div className="h-11 w-32 rounded-button bg-surface-alt animate-pulse" />
+          <div className="h-10 w-10 rounded-full bg-surface-alt animate-pulse" />
         </div>
       </div>
     </div>
@@ -171,11 +161,11 @@ function HeroSkeleton() {
 function SectionSkeleton() {
   return (
     <div className="mb-10">
-      <div className="mb-3 h-4 w-44 rounded bg-white/10 animate-pulse mx-6 md:mx-12" />
-      <div className="flex gap-2.5 px-6 md:px-12 overflow-hidden">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex-shrink-0 w-[260px]">
-            <div className="aspect-video rounded-[6px] bg-white/[0.06] animate-pulse" />
+      <div className="mb-3 h-4 w-44 rounded-pill bg-surface-alt animate-pulse mx-6 md:mx-12" />
+      <div className="flex gap-3 px-6 md:px-12 overflow-hidden">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex-shrink-0 w-[165px]">
+            <div className="aspect-[2/3] rounded-card bg-surface-alt animate-pulse" />
           </div>
         ))}
       </div>
@@ -229,20 +219,20 @@ export default function RecommendationsPage() {
   const hero: Movie | undefined = sections[0]?.movies[0];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-bg-primary text-text-primary">
 
       {/* ── NAVBAR ── */}
       <header className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-[#0a0a0a]/96 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.06)]"
-          : "bg-gradient-to-b from-black/80 to-transparent"
+          ? "bg-bg-primary/95 backdrop-blur-md shadow-[0_1px_0_rgba(232,224,200,0.06)]"
+          : "bg-gradient-to-b from-bg-primary/80 to-transparent"
       )}>
         <div className="flex h-16 items-center justify-between px-6 md:px-12">
           {/* Logo */}
           <Link
             href="/"
-            className="select-none font-display text-xl font-bold tracking-tight text-white"
+            className="select-none font-display text-xl font-bold tracking-tight text-text-primary"
           >
             Recomm<span className="text-secondary">andarr</span>
           </Link>
@@ -251,13 +241,13 @@ export default function RecommendationsPage() {
           <nav className="hidden md:flex items-center gap-7">
             <Link
               href="/recommendations"
-              className="text-sm font-semibold text-white transition-colors"
+              className="text-sm font-semibold text-text-primary transition-colors"
             >
               Recommandations
             </Link>
             <Link
               href="/swipe"
-              className="text-sm font-medium text-white/55 hover:text-white transition-colors"
+              className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
             >
               Swipe
             </Link>
@@ -267,13 +257,13 @@ export default function RecommendationsPage() {
           <div className="flex items-center gap-4">
             <button
               aria-label="Rechercher"
-              className="cursor-pointer text-white/60 hover:text-white transition-colors"
+              className="cursor-pointer text-text-secondary hover:text-text-primary transition-colors"
             >
               <IcoSearch />
             </button>
             <Link
               href="/account"
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white ring-2 ring-transparent hover:ring-white/30 transition-all"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-text-primary ring-2 ring-transparent hover:ring-secondary/40 transition-all"
               aria-label="Mon compte"
             >
               R
@@ -286,7 +276,7 @@ export default function RecommendationsPage() {
       {loading && !hero ? (
         <HeroSkeleton />
       ) : hero ? (
-        <section className="relative flex min-h-[68vh] items-end overflow-hidden">
+        <section className="relative flex min-h-[65vh] items-end overflow-hidden">
           {/* Image de fond */}
           {hero.posterPath && (
             <Image
@@ -299,40 +289,38 @@ export default function RecommendationsPage() {
             />
           )}
 
-          {/* Double gradient : côté gauche sombre + bas sombre */}
+          {/* Gradients : côté gauche + bas vers bg-primary */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to right, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.1) 100%), " +
-                "linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.5) 25%, transparent 55%)",
+                "linear-gradient(to right, rgba(10,19,13,0.97) 20%, rgba(10,19,13,0.6) 55%, rgba(10,19,13,0.1) 100%), " +
+                "linear-gradient(to top, rgba(10,19,13,1) 0%, rgba(10,19,13,0.55) 25%, transparent 55%)",
             }}
           />
 
-          {/* Contenu */}
+          {/* Contenu hero */}
           <div className="relative z-10 w-full max-w-2xl px-6 pb-14 pt-36 md:px-12 md:pb-20">
 
             {/* Genre */}
             {(hero.genres?.length ?? 0) > 0 && (
               <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.2em] text-secondary">
-                {hero.genres!.slice(0, 3).join(" / ")}
+                {hero.genres.slice(0, 3).join(" / ")}
               </p>
             )}
 
             {/* Titre */}
             <h1
-              className="font-display font-black uppercase leading-none tracking-[-0.02em] text-white"
+              className="font-display font-black uppercase leading-none tracking-[-0.02em] text-text-primary"
               style={{ fontSize: "clamp(2rem, 6vw, 4.5rem)" }}
             >
               {hero.title}
             </h1>
 
             {/* Méta */}
-            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-white/60">
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-text-secondary">
               {hero.releaseDate && <span>{hero.releaseDate.slice(0, 4)}</span>}
-              {hero.runtimeMinutes != null && (
-                <span>{hero.runtimeMinutes} min</span>
-              )}
+              {hero.runtimeMinutes != null && <span>{hero.runtimeMinutes} min</span>}
               {hero.tmdbRating > 0 && (
                 <span className="flex items-center gap-1">
                   <span className="text-warning">★</span>
@@ -340,7 +328,7 @@ export default function RecommendationsPage() {
                 </span>
               )}
               {hero.isAvailable && (
-                <span className="rounded-full border border-success/40 bg-success/12 px-3 py-0.5 text-xs font-semibold text-success">
+                <span className="rounded-pill border border-success/40 bg-success/12 px-3 py-0.5 text-xs font-semibold text-success">
                   Disponible
                 </span>
               )}
@@ -348,7 +336,7 @@ export default function RecommendationsPage() {
 
             {/* Overview */}
             {hero.overview && (
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/65 line-clamp-3 md:line-clamp-4">
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-text-secondary line-clamp-3 md:line-clamp-4">
                 {hero.overview}
               </p>
             )}
@@ -357,23 +345,23 @@ export default function RecommendationsPage() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => router.push(`/movies/${hero.id}?from=recommendations`)}
-                className="cursor-pointer flex items-center gap-2 rounded-[6px] bg-secondary px-7 py-3 text-sm font-bold text-[#0a0a0a] shadow-[0_0_24px_rgba(212,169,74,0.35)] transition-all hover:brightness-110 active:scale-[0.97]"
+                className="cursor-pointer flex items-center gap-2 rounded-button bg-secondary px-7 py-3 text-sm font-bold text-bg-primary shadow-[0_0_24px_rgba(212,169,74,0.3)] transition-all hover:brightness-110 active:scale-[0.97]"
               >
-                <IcoPlay className="text-[#0a0a0a]" />
+                <IcoPlay />
                 Regarder
               </button>
               <button
                 onClick={() => router.push(`/movies/${hero.id}?from=recommendations`)}
                 aria-label="Plus d'infos"
-                className="cursor-pointer flex h-11 w-11 items-center justify-center rounded-full border-2 border-white/40 bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:border-white/60"
+                className="cursor-pointer flex h-11 w-11 items-center justify-center rounded-full border-2 border-border bg-surface/60 text-text-primary backdrop-blur-sm transition-all hover:bg-surface hover:border-secondary/40"
               >
                 <IcoInfo />
               </button>
             </div>
           </div>
 
-          {/* Fondu bas → fond noir */}
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+          {/* Fondu bas vers bg-primary */}
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-bg-primary to-transparent" />
         </section>
       ) : null}
 
@@ -384,24 +372,25 @@ export default function RecommendationsPage() {
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={cn(
-              "cursor-pointer rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-150",
+              "cursor-pointer rounded-pill border px-4 py-1.5 text-xs font-semibold transition-all duration-150",
               filter === f.value
-                ? "border-white bg-white text-black"
-                : "border-white/20 text-white/55 hover:border-white/40 hover:text-white"
+                ? "border-secondary bg-secondary text-bg-primary"
+                : "border-border text-text-secondary hover:border-secondary/40 hover:text-text-primary"
             )}
           >
             {f.label}
           </button>
         ))}
-        <div className="ml-auto text-xs text-white/30">
-          {!loading && sections.length > 0 && `${sections.reduce((n, s) => n + s.movies.length, 0)} films`}
+        <div className="ml-auto text-xs text-text-secondary/60">
+          {!loading && sections.length > 0 &&
+            `${sections.reduce((n, s) => n + s.movies.length, 0)} films`}
         </div>
       </div>
 
       {/* ── RANGÉES ── */}
       <div className="pb-20">
         {error && (
-          <p className="px-6 py-10 text-center text-sm text-red-400 md:px-12">{error}</p>
+          <p className="px-6 py-10 text-center text-sm text-error md:px-12">{error}</p>
         )}
 
         {loading
@@ -416,20 +405,20 @@ export default function RecommendationsPage() {
 
         {!loading && !error && sections.length === 0 && (
           <div className="flex flex-col items-center px-6 py-28 text-center">
-            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white/[0.05]">
-              <svg className="h-9 w-9 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75.125c0-2.625 2.625-2.625 2.625-5.25s-2.625-2.625-2.625-5.25 2.625-2.625 2.625-5.25S2.25 1.5 5.25 1.5m13.5 0c-3.498 0-5.25 3.498-5.25 6.75S18.75 15 18.75 18.375c0 .621-.504 1.125-1.125 1.125m1.5-18.375a1.125 1.125 0 0 0-1.125 1.125M3.375 19.5" />
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-surface border border-border">
+              <svg className="h-9 w-9 text-text-secondary/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0c0 .621.504 1.125 1.125 1.125h15.75c.621 0 1.125-.504 1.125-1.125" />
               </svg>
             </div>
-            <p className="text-lg font-semibold text-white mb-2">Aucune recommandation</p>
-            <p className="text-sm text-white/40 mb-8 max-w-xs">
+            <p className="text-lg font-semibold text-text-primary mb-2">Aucune recommandation</p>
+            <p className="text-sm text-text-secondary mb-8 max-w-xs">
               Swipe quelques films pour que le moteur apprenne tes goûts.
             </p>
             <Link
               href="/swipe"
-              className="inline-flex items-center gap-2 rounded-[6px] bg-secondary px-8 py-3 text-sm font-bold text-[#0a0a0a] transition-all hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-button bg-secondary px-8 py-3 text-sm font-bold text-bg-primary transition-all hover:brightness-110"
             >
-              <IcoPlay className="text-[#0a0a0a]" />
+              <IcoPlay />
               Aller swiper
             </Link>
           </div>
