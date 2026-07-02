@@ -203,16 +203,16 @@ function DeckCard({
   const absOrder = Math.abs(order);
 
   // Deck positioning
-  const translateX = order * 172;
+  const translateX = order * 260;
   const scale      = isCenter ? 1 : absOrder === 1 ? 0.855 : 0.70;
   const opacity    = isCenter ? 1 : absOrder === 1 ? 0.55 : 0.25;
   const zIndex     = 30 - absOrder * 10;
 
   // Swipe exit — ease-in for exiting (feels natural)
   const exitTransform = exitDir === "right"
-    ? "translateX(440px) rotate(18deg) scale(0.88)"
+    ? "translateX(620px) rotate(18deg) scale(0.88)"
     : exitDir === "left"
-    ? "translateX(-440px) rotate(-18deg) scale(0.88)"
+    ? "translateX(-620px) rotate(-18deg) scale(0.88)"
     : null;
 
   return (
@@ -235,19 +235,19 @@ function DeckCard({
         onKeyDown={isCenter ? (e) => e.key === "Enter" && onClick?.() : undefined}
         className={cn(
           "relative overflow-hidden rounded-[20px] bg-surface select-none",
-          "w-[210px] h-[315px] md:w-[240px] md:h-[360px]",
+          "h-[50vh] aspect-[2/3]",
           isCenter && "cursor-pointer shadow-[0_32px_80px_rgba(0,0,0,0.8)]"
         )}
       >
         {/* Poster */}
         {movie.posterPath ? (
           <Image
-            src={posterUrl(movie.posterPath)}
+            src={posterUrl(movie.posterPath, isCenter ? "w780" : "w500")}
             alt={movie.title}
             fill
             className="object-cover"
             priority={isCenter}
-            sizes="260px"
+            sizes="(max-width: 768px) 34vw, 340px"
           />
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-3 bg-surface-alt px-4 text-center">
@@ -424,7 +424,7 @@ export default function SwipePage() {
 
     try { await api.post("/api/swipe", payload); } catch { /* silencieux */ }
 
-    if (newCount % 10 === 0) {
+    if (newCount % 3 === 0) {
       try { await api.post("/api/recommendations/profile/update"); } catch { /* silencieux */ }
     }
     if (newCount % 5 === 0) loadMetrics();
@@ -519,7 +519,7 @@ export default function SwipePage() {
           {loading ? (
             /* Skeleton */
             <div className="flex flex-1 flex-col items-center justify-center gap-6">
-              <div className="w-[240px] h-[360px] rounded-[20px] bg-surface animate-pulse" />
+              <div className="h-[50vh] aspect-[2/3] rounded-[20px] bg-surface animate-pulse" />
               <div className="h-3 w-48 rounded-pill bg-surface animate-pulse" />
             </div>
           ) : !currentMovie ? (
