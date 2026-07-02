@@ -209,7 +209,7 @@ export default function OnboardingPage() {
       {/* Header minimal */}
       <header className="border-b border-border px-6 py-4">
         <Link href="/" className="font-display text-xl font-bold text-text-primary">
-          Swipe<span className="text-accent">Film</span>
+          Recomm<span className="text-secondary">andarr</span>
         </Link>
       </header>
 

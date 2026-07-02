@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { useAppStore } from "@/lib/store";
 import { useAuthGuard } from "@/lib/useAuthGuard";
 import type { EngineMetrics } from "@/types";
+import { Navbar } from "@/components/Navbar";
 
 type ActionStatus = "idle" | "running" | "done" | "error";
 
@@ -192,27 +193,8 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen">
       {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-border backdrop-blur-md" style={{ background: "var(--color-nav-bg, #0A130D)" }}>
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
-          <Link href="/" className="font-display text-xl font-bold text-text-primary">
-            Swipe<span className="text-secondary">Film</span>
-          </Link>
-          <nav className="flex items-center gap-2">
-            <Link href="/recommendations" className="rounded-button px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
-              Recommandations
-            </Link>
-            <Link href="/swipe" className="rounded-button px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
-              Swipe
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="rounded-button border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-error/40 hover:text-error transition-colors"
-            >
-              Déconnexion
-            </button>
-          </nav>
-        </div>
-      </header>
+      <Navbar activePage="recommendations" variant="overlay" />
+
 
       <main className="mx-auto max-w-4xl px-6 py-12 space-y-10">
 

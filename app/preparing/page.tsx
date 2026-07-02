@@ -208,7 +208,7 @@ export default function PreparingPage() {
       {/* Header minimal */}
       <header className="border-b border-border px-6 py-4">
         <Link href="/" className="font-display text-xl font-bold text-text-primary">
-          Swipe<span className="text-secondary">Film</span>
+          Recomm<span className="text-secondary">andarr</span>
         </Link>
       </header>
 
