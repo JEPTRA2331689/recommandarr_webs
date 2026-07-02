@@ -347,7 +347,7 @@ function SwipeDeck({ movies: tmdbMovies }: { movies: TmdbMovie[] }) {
 const INTEGRATIONS = [
   { name: "Jellyfin",   slug: "jellyfin",          color: "#00A4DC" },
   { name: "Plex",       slug: "plex",               color: "#E5A00D" },
-  { name: "Overseerr",  slug: "overseerr",          color: "#E4A34A" },
+  { name: "Seerr",      slug: "seerr",              color: "#7B65F5", customSrc: "/seerr.svg" },
   { name: "TMDB",       slug: "themoviedatabase",   color: "#01D277" },
   { name: "Radarr",     slug: "radarr",             color: "#FFC230" },
   { name: "Sonarr",     slug: "sonarr",             color: "#35C5F4" },
@@ -355,13 +355,21 @@ const INTEGRATIONS = [
 
 function IntegrationLogo({ p }: { p: typeof INTEGRATIONS[number] }) {
   const [failed, setFailed] = useState(false);
+  const hasSrc = "customSrc" in p;
   return (
     <div className="flex flex-col items-center gap-2">
       <div
         className="flex h-14 w-14 items-center justify-center rounded-[14px] border border-white/[0.08] bg-white/[0.03] backdrop-blur-sm transition-colors hover:bg-white/[0.07]"
         aria-label={p.name}
       >
-        {!failed ? (
+        {hasSrc ? (
+          <img
+            src={(p as typeof INTEGRATIONS[2]).customSrc}
+            alt={p.name}
+            className="h-8 w-8"
+            loading="lazy"
+          />
+        ) : !failed ? (
           <img
             src={`https://cdn.simpleicons.org/${p.slug}/${p.color.slice(1)}`}
             alt={p.name}
@@ -485,7 +493,7 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-7 flex flex-wrap items-center justify-center gap-2 text-xs text-text-secondary">
-              {["Jellyfin", "Plex", "Overseerr"].map((s) => (
+              {["Jellyfin", "Plex", "Seerr"].map((s) => (
                 <span key={s} className="rounded-full border border-white/[0.1] bg-white/[0.03] px-3 py-1 font-medium backdrop-blur-sm">{s}</span>
               ))}
               <span className="mx-1 text-text-secondary/30">·</span>
@@ -598,7 +606,7 @@ export default function LandingPage() {
                     <p className="font-semibold text-text-primary">Avec Recommandarr</p>
                   </div>
                   <ul className="space-y-3">
-                    {["Un film à la fois — décision en 5 secondes","Le moteur apprend de chaque swipe ce que tu aimes","Recommandations depuis ta bibliothèque, pas un catalogue externe","Film pas dispo ? Demande-le via Overseerr en un clic","Ton historique Jellyfin devient le carburant du moteur"].map((t) => (
+                    {["Un film à la fois — décision en 5 secondes","Le moteur apprend de chaque swipe ce que tu aimes","Recommandations depuis ta bibliothèque, pas un catalogue externe","Film pas dispo ? Demande-le via Seerr en un clic","Ton historique Jellyfin devient le carburant du moteur"].map((t) => (
                       <li key={t} className="flex items-start gap-3 text-sm text-text-primary">
                         <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-secondary" aria-hidden />{t}
                       </li>
@@ -776,7 +784,7 @@ export default function LandingPage() {
             <span className="ml-2 text-xs font-normal text-text-secondary">beta v0.1</span>
           </span>
           <div className="flex flex-wrap gap-2">
-            {["ASP.NET Core", "PostgreSQL", "Jellyfin", "Plex", "TMDB", "Overseerr"].map((t) => (
+            {["ASP.NET Core", "PostgreSQL", "Jellyfin", "Plex", "TMDB", "Seerr"].map((t) => (
               <span key={t} className="rounded-full border border-white/[0.07] px-3 py-1 text-xs text-text-secondary">{t}</span>
             ))}
           </div>

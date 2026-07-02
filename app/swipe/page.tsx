@@ -2,22 +2,17 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { useAuthGuard } from "@/lib/useAuthGuard";
 import type { Movie, EngineMetrics, SwipePayload } from "@/types";
 import { cn } from "@/lib/utils";
+import { Navbar } from "@/components/Navbar";
+import { DeckCard } from "@/components/DeckCard";
+import { RatingModal } from "@/components/RatingModal";
+import { MetricsPanel } from "@/components/MetricsPanel";
 
 // ── Constantes ────────────────────────────────────────────────────────────────
-
-const SKIP_REASONS = [
-  { value: 1, label: "Déjà vu" },
-  { value: 2, label: "Pas mon genre" },
-  { value: 3, label: "Pas d'humeur" },
-  { value: 4, label: "Mauvaise note" },
-  { value: 0, label: "Autre" },
-] as const;
 
 const SECTIONS = [
   { value: "for_you",            label: "Pour toi" },
@@ -32,290 +27,6 @@ const SECTIONS = [
 ] as const;
 
 type SectionKey = (typeof SECTIONS)[number]["value"];
-
-function posterUrl(path: string | null, size = "w500"): string {
-  if (!path) return "";
-  if (path.startsWith("/")) return `https://image.tmdb.org/t/p/${size}${path}`;
-  if (path.startsWith("https://image.tmdb.org/")) return path;
-  return "";
-}
-
-// ── Modal de notation ─────────────────────────────────────────────────────────
-
-function RatingModal({
-  movie,
-  direction,
-  onSubmit,
-}: {
-  movie: Movie;
-  direction: "like" | "skip";
-  onSubmit: (rating: number, reason?: number) => void;
-}) {
-  const [rating, setRating] = useState<number | null>(null);
-  const [reason, setReason] = useState<number | null>(null);
-  const canSubmit = rating !== null && (direction === "like" || reason !== null);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 md:items-center">
-      <div className="w-full max-w-sm rounded-sheet border border-border bg-surface p-6">
-        <div className="mb-4 flex items-center gap-3">
-          <div className={cn(
-            "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border",
-            direction === "like"
-              ? "border-swipe-like/40 bg-swipe-like/10 text-swipe-like"
-              : "border-swipe-skip/40 bg-swipe-skip/10 text-swipe-skip"
-          )}>
-            {direction === "like" ? (
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-              </svg>
-            ) : (
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-            )}
-          </div>
-          <div className="min-w-0">
-            <p className="font-semibold text-text-primary line-clamp-1">{movie.title}</p>
-            <p className="text-xs text-text-secondary">
-              {direction === "like" ? "Tu sembles intéressé" : "Pas intéressé"}
-            </p>
-          </div>
-        </div>
-
-        <div className="mb-5">
-          <p className="mb-3 text-sm font-medium text-text-primary">
-            Note la pertinence de cette recommandation <span className="text-accent">*</span>
-          </p>
-          <div className="flex gap-1.5 flex-wrap">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-              <button
-                key={n}
-                onClick={() => setRating(n)}
-                className={cn(
-                  "h-9 w-9 cursor-pointer rounded-button border text-sm font-semibold transition-all",
-                  rating === n
-                    ? "border-secondary bg-secondary text-bg-primary"
-                    : "border-border text-text-secondary hover:border-secondary/50 hover:text-text-primary"
-                )}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-text-secondary">1 = hors sujet · 10 = exactement ce que je veux</p>
-        </div>
-
-        {direction === "skip" && (
-          <div className="mb-5">
-            <p className="mb-3 text-sm font-medium text-text-primary">
-              Pourquoi ? <span className="text-accent">*</span>
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {SKIP_REASONS.map((r) => (
-                <button
-                  key={r.value}
-                  onClick={() => setReason(r.value)}
-                  className={cn(
-                    "cursor-pointer rounded-pill border px-3 py-1.5 text-xs font-medium transition-all",
-                    reason === r.value
-                      ? "border-accent bg-accent/15 text-accent"
-                      : "border-border text-text-secondary hover:border-accent/40 hover:text-text-primary"
-                  )}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <button
-          onClick={() => canSubmit && onSubmit(rating!, reason ?? undefined)}
-          disabled={!canSubmit}
-          className="w-full cursor-pointer rounded-button bg-primary py-3 text-sm font-semibold text-text-primary transition-all hover:brightness-110 disabled:opacity-40 disabled:pointer-events-none"
-        >
-          Valider
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ── Sidebar métriques ─────────────────────────────────────────────────────────
-
-function MetricsPanel({ metrics, swipeCount }: { metrics: EngineMetrics | null; swipeCount: number }) {
-  if (!metrics) return null;
-  const progress = Math.min(100, (swipeCount / (metrics.swipesForReliableMetrics || 20)) * 100);
-
-  return (
-    <div className="hidden lg:flex flex-col gap-3 w-56 flex-shrink-0 pt-2">
-      <div className="rounded-card border border-border bg-surface p-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary mb-3">Engine</p>
-        <div className="space-y-3">
-          {[
-            { label: "Pearson", value: metrics.pearsonCorrelation?.toFixed(3), color: "text-secondary" },
-            { label: "MAE",     value: metrics.mae?.toFixed(2),                color: "text-accent"    },
-            { label: "Biais",   value: metrics.bias != null ? (metrics.bias >= 0 ? "+" : "") + metrics.bias.toFixed(2) : null, color: "text-text-primary" },
-          ].map(({ label, value, color }) => (
-            <div key={label} className="flex justify-between text-xs">
-              <span className="text-text-secondary">{label}</span>
-              <span className={cn("font-semibold", color)}>{value ?? "—"}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-card border border-border bg-surface p-4">
-        <div className="flex justify-between text-xs mb-2">
-          <span className="text-text-secondary">Cold start</span>
-          <span className="text-text-primary font-medium">{swipeCount} swipes</span>
-        </div>
-        <div className="h-1.5 w-full rounded-full bg-surface-alt">
-          <div className="h-full rounded-full bg-secondary transition-all duration-500" style={{ width: `${progress}%` }} />
-        </div>
-        <p className="mt-2 text-xs text-text-secondary">
-          {metrics.swipesForReliableMetrics - swipeCount > 0
-            ? `Encore ${metrics.swipesForReliableMetrics - swipeCount} swipes`
-            : "Métriques fiables ✓"}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ── Carte du deck ─────────────────────────────────────────────────────────────
-
-function DeckCard({
-  movie,
-  order,
-  exitDir,
-  onClick,
-}: {
-  movie: Movie | undefined;
-  order: number; // -2 -1 0 +1 +2
-  exitDir: "left" | "right" | null;
-  onClick?: () => void;
-}) {
-  if (!movie) return null;
-
-  const isCenter = order === 0;
-  const absOrder = Math.abs(order);
-
-  // Deck positioning
-  const translateX = order * 260;
-  const scale      = isCenter ? 1 : absOrder === 1 ? 0.855 : 0.70;
-  const opacity    = isCenter ? 1 : absOrder === 1 ? 0.55 : 0.25;
-  const zIndex     = 30 - absOrder * 10;
-
-  // Swipe exit — ease-in for exiting (feels natural)
-  const exitTransform = exitDir === "right"
-    ? "translateX(620px) rotate(18deg) scale(0.88)"
-    : exitDir === "left"
-    ? "translateX(-620px) rotate(-18deg) scale(0.88)"
-    : null;
-
-  return (
-    <div
-      className="absolute"
-      style={{
-        transform:  exitTransform ?? `translateX(${translateX}px) scale(${scale})`,
-        opacity:    exitDir ? 0 : opacity,
-        zIndex,
-        transition: exitDir
-          ? "transform 270ms cubic-bezier(0.4,0,1,1), opacity 200ms ease-in"
-          : "transform 300ms cubic-bezier(0.22,1,0.36,1), opacity 300ms ease-out",
-        willChange: "transform, opacity",
-      }}
-    >
-      <div
-        role={isCenter ? "button" : undefined}
-        tabIndex={isCenter ? 0 : -1}
-        onClick={isCenter ? onClick : undefined}
-        onKeyDown={isCenter ? (e) => e.key === "Enter" && onClick?.() : undefined}
-        className={cn(
-          "relative overflow-hidden rounded-[20px] bg-surface select-none",
-          "h-[50vh] aspect-[2/3]",
-          isCenter && "cursor-pointer shadow-[0_32px_80px_rgba(0,0,0,0.8)]"
-        )}
-      >
-        {/* Poster */}
-        {movie.posterPath ? (
-          <Image
-            src={posterUrl(movie.posterPath, isCenter ? "w780" : "w500")}
-            alt={movie.title}
-            fill
-            className="object-cover"
-            priority={isCenter}
-            sizes="(max-width: 768px) 34vw, 340px"
-          />
-        ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-3 bg-surface-alt px-4 text-center">
-            <svg className="h-12 w-12 text-text-secondary/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25z" />
-            </svg>
-            <span className="text-xs text-text-secondary line-clamp-3">{movie.title}</span>
-          </div>
-        )}
-
-        {/* Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/94 via-black/20 to-transparent" />
-
-        {/* Badge disponible (top-left) */}
-        {movie.isAvailable && (
-          <div className="absolute top-3 left-3 flex h-7 w-7 items-center justify-center rounded-full bg-success shadow-lg">
-            <svg className="h-3.5 w-3.5 text-bg-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-            </svg>
-          </div>
-        )}
-
-        {/* Rating TMDB (top-right) */}
-        {movie.tmdbRating > 0 && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 rounded-button bg-black/65 backdrop-blur-sm px-2 py-1">
-            <span className="text-sm font-bold text-white leading-none">{movie.tmdbRating.toFixed(1)}</span>
-            <span className="text-warning text-xs leading-none">★</span>
-          </div>
-        )}
-
-        {/* Score Recommandarr */}
-        {movie.score != null && (
-          <div className="absolute top-11 right-3 rounded-button bg-secondary/90 px-1.5 py-0.5 text-[10px] font-bold text-bg-primary">
-            {(movie.score * 100).toFixed(0)}%
-          </div>
-        )}
-
-        {/* Infos bas */}
-        <div className="absolute bottom-0 left-0 right-0 p-3.5">
-          <p className="font-display text-[16px] md:text-[17px] font-bold leading-tight text-white line-clamp-2">
-            {movie.title}
-          </p>
-          <div className="mt-1.5 flex items-center gap-2 text-[11px] text-white/60">
-            {movie.releaseDate && <span>{movie.releaseDate.slice(0, 4)}</span>}
-            {movie.runtimeMinutes && (
-              <>
-                <span className="text-white/30">·</span>
-                <span>{movie.runtimeMinutes}min</span>
-              </>
-            )}
-          </div>
-          {(movie.genres?.length ?? 0) > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {movie.genres!.slice(0, 2).map((g) => (
-                <span
-                  key={g}
-                  className="rounded-pill bg-white/10 border border-white/10 px-2 py-0.5 text-[10px] text-white/70 backdrop-blur-sm"
-                >
-                  {g}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -456,27 +167,20 @@ export default function SwipePage() {
       />
 
       {/* ── NAVBAR ── */}
-      <header className="relative z-40 flex-shrink-0 border-b border-border backdrop-blur-md" style={{ background: "var(--color-nav-bg)" }}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
-          <Link href="/" className="font-display text-xl font-bold text-text-primary select-none">
-            Recomm<span className="text-secondary">andarr</span>
-          </Link>
-          <nav className="flex items-center gap-2">
-            <Link href="/recommendations" className="rounded-button px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
-              Recommandations
-            </Link>
-            <Link href="/swipe" className="rounded-button bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
-              Swipe
-            </Link>
-          </nav>
+      <Navbar
+        activePage="swipe"
+        variant="solid"
+        rightSlot={
           <div className="flex items-center gap-3 text-sm">
-            <span className="hidden sm:inline text-text-secondary">{swipeCount} swipe{swipeCount !== 1 ? "s" : ""}</span>
+            <span className="hidden sm:inline text-text-secondary">
+              {swipeCount} swipe{swipeCount !== 1 ? "s" : ""}
+            </span>
             <Link href="/account" className="rounded-button border border-border px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors">
               Compte
             </Link>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* ── SECTION TABS ── */}
       <div
@@ -585,7 +289,7 @@ export default function SwipePage() {
               )}
 
               {/* ── BOUTONS SWIPE ── */}
-              <div className="flex-shrink-0 flex items-center justify-center gap-10 py-3">
+              <div className="flex-shrink-0 flex items-center justify-center gap-10 py-3 pb-20 md:pb-3">
                 {/* Skip */}
                 <button
                   onClick={() => currentMovie && !exitDir && initiateSwipe(currentMovie, "skip")}

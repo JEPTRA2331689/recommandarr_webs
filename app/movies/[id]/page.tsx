@@ -5,145 +5,17 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { api } from "@/lib/api";
 import { useAuthGuard } from "@/lib/useAuthGuard";
-import { cn } from "@/lib/utils";
+import { cn, posterUrl } from "@/lib/utils";
 import type { Movie, SwipePayload } from "@/types";
+import { RatingModal } from "@/components/RatingModal";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-
-function posterUrl(path: string | null, size = "w342"): string {
-  if (!path) return "";
-  if (path.startsWith("/")) return `https://image.tmdb.org/t/p/${size}${path}`;
-  if (path.startsWith("https://image.tmdb.org/")) return path;
-  return "";
-}
 
 function formatRuntime(min: number | null): string | null {
   if (!min) return null;
   const h = Math.floor(min / 60);
   const m = min % 60;
   return h > 0 ? `${h}h${m > 0 ? ` ${m}min` : ""}` : `${m}min`;
-}
-
-// ── Skip reasons (same as swipe page) ────────────────────────────────────────
-
-const SKIP_REASONS = [
-  { value: 1, label: "Déjà vu" },
-  { value: 2, label: "Pas mon genre" },
-  { value: 3, label: "Pas d'humeur" },
-  { value: 4, label: "Mauvaise note" },
-  { value: 0, label: "Autre" },
-] as const;
-
-// ── RatingModal ───────────────────────────────────────────────────────────────
-
-function RatingModal({
-  movie,
-  direction,
-  onSubmit,
-  onCancel,
-}: {
-  movie: Movie;
-  direction: "like" | "skip";
-  onSubmit: (rating: number, reason?: number) => void;
-  onCancel: () => void;
-}) {
-  const [rating, setRating] = useState<number | null>(null);
-  const [reason, setReason] = useState<number | null>(null);
-  const canSubmit = rating !== null && (direction === "like" || reason !== null);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 md:items-center">
-      <div className="w-full max-w-sm rounded-sheet border border-border bg-surface p-6">
-        {/* Header */}
-        <div className="mb-4 flex items-center gap-3">
-          <div className={cn(
-            "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border",
-            direction === "like"
-              ? "border-success/40 bg-success/10 text-success"
-              : "border-accent/40 bg-accent/10 text-accent"
-          )}>
-            {direction === "like" ? (
-              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-              </svg>
-            ) : (
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-            )}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-semibold text-text-primary line-clamp-1">{movie.title}</p>
-            <p className="text-xs text-text-secondary">
-              {direction === "like" ? "Tu sembles intéressé" : "Pas intéressé"}
-            </p>
-          </div>
-          <button onClick={onCancel} className="text-text-secondary hover:text-text-primary transition-colors ml-2">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Pertinence */}
-        <div className="mb-5">
-          <p className="mb-3 text-sm font-medium text-text-primary">
-            Note la pertinence de cette reco <span className="text-accent">*</span>
-          </p>
-          <div className="flex gap-1.5 flex-wrap">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-              <button
-                key={n}
-                onClick={() => setRating(n)}
-                className={cn(
-                  "h-9 w-9 rounded-button border text-sm font-semibold transition-all",
-                  rating === n
-                    ? "border-secondary bg-secondary text-bg-primary"
-                    : "border-border text-text-secondary hover:border-secondary/50 hover:text-text-primary"
-                )}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-text-secondary">1 = hors sujet · 10 = exactement ce que je veux</p>
-        </div>
-
-        {/* Raison (skip uniquement) */}
-        {direction === "skip" && (
-          <div className="mb-5">
-            <p className="mb-3 text-sm font-medium text-text-primary">
-              Pourquoi ? <span className="text-accent">*</span>
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {SKIP_REASONS.map((r) => (
-                <button
-                  key={r.value}
-                  onClick={() => setReason(r.value)}
-                  className={cn(
-                    "rounded-pill border px-3 py-1.5 text-xs font-medium transition-all",
-                    reason === r.value
-                      ? "border-accent bg-accent/15 text-accent"
-                      : "border-border text-text-secondary hover:border-accent/40 hover:text-text-primary"
-                  )}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <button
-          onClick={() => canSubmit && onSubmit(rating!, reason ?? undefined)}
-          disabled={!canSubmit}
-          className="w-full rounded-button bg-primary py-3 text-sm font-semibold text-text-primary transition-all hover:brightness-110 disabled:opacity-40 disabled:pointer-events-none"
-        >
-          Valider
-        </button>
-      </div>
-    </div>
-  );
 }
 
 // ── Detail row ────────────────────────────────────────────────────────────────
@@ -208,12 +80,39 @@ export default function MovieDetailPage() {
       .then((m) => {
         setMovie(m);
         const lang = navigator.language || "en-US";
-        fetch(`/api/tmdb/credits?id=${m.tmdbId}&language=${encodeURIComponent(lang)}`)
-          .then((r) => (r.ok ? r.json() : { cast: [] }))
-          .then((data: { cast?: { name: string; character: string; photo: string | null }[] }) =>
-            setCredits(data.cast ?? [])
-          )
-          .catch(() => {});
+        const enc  = encodeURIComponent(lang);
+
+        // TMDB localized data + credits en parallèle
+        Promise.all([
+          fetch(`/api/tmdb/movie?id=${m.tmdbId}&language=${enc}`)
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null) as Promise<{
+              title: string | null;
+              overview: string | null;
+              posterPath: string | null;
+              genres: string[];
+            } | null>,
+          fetch(`/api/tmdb/credits?id=${m.tmdbId}&language=${enc}`)
+            .then((r) => (r.ok ? r.json() : { cast: [] }))
+            .catch(() => ({ cast: [] })) as Promise<{
+              cast: { name: string; character: string; photo: string | null }[];
+            }>,
+        ]).then(([tmdb, cred]) => {
+          if (tmdb) {
+            setMovie((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    ...(tmdb.title      ? { title:      tmdb.title }      : {}),
+                    ...(tmdb.overview   ? { overview:   tmdb.overview }   : {}),
+                    ...(tmdb.posterPath ? { posterPath: tmdb.posterPath } : {}),
+                    ...(tmdb.genres?.length ? { genres: tmdb.genres }     : {}),
+                  }
+                : null
+            );
+          }
+          setCredits(cred.cast ?? []);
+        });
       })
       .catch(() => setError("Film introuvable."))
       .finally(() => setLoading(false));

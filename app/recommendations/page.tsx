@@ -7,7 +7,9 @@ import Image from "next/image";
 import { api } from "@/lib/api";
 import { useAuthGuard } from "@/lib/useAuthGuard";
 import type { HomeSection, Movie } from "@/types";
-import { cn } from "@/lib/utils";
+import { cn, posterUrl } from "@/lib/utils";
+import { Navbar } from "@/components/Navbar";
+import { PosterCard } from "@/components/PosterCard";
 
 type Filter = "All" | "AvailableOnly" | "UnavailableOnly";
 
@@ -17,22 +19,7 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: "UnavailableOnly", label: "À découvrir" },
 ];
 
-function posterUrl(path: string | null, size = "w500"): string {
-  if (!path) return "";
-  if (path.startsWith("/")) return `https://image.tmdb.org/t/p/${size}${path}`;
-  if (path.startsWith("https://image.tmdb.org/")) return path;
-  return "";
-}
-
-// ── Icônes ────────────────────────────────────────────────────────────────────
-
-function IcoSearch() {
-  return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-    </svg>
-  );
-}
+// ── Icônes locales ───────────────────────────────────────────────────────────
 
 function IcoInfo() {
   return (
@@ -50,74 +37,6 @@ function IcoPlay() {
   );
 }
 
-// ── Carte poster (2:3) ────────────────────────────────────────────────────────
-
-function MovieCard({ movie, onOpen }: { movie: Movie; onOpen: (id: string) => void }) {
-  const [imgError, setImgError] = useState(false);
-  const url = posterUrl(movie.posterPath, "w500");
-
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={() => onOpen(movie.id)}
-      onKeyDown={(e) => e.key === "Enter" && onOpen(movie.id)}
-      className="group relative flex-shrink-0 w-[140px] md:w-[165px] lg:w-[185px] cursor-pointer snap-start"
-    >
-      {/* Poster 2:3 */}
-      <div className="relative aspect-[2/3] overflow-hidden rounded-card bg-surface transition-all duration-200 group-hover:scale-[1.03] group-hover:shadow-[0_16px_40px_rgba(0,0,0,0.7)] group-hover:ring-1 group-hover:ring-secondary/40">
-
-        {url && !imgError ? (
-          <Image
-            src={url}
-            alt={movie.title}
-            fill
-            className="object-cover object-center"
-            sizes="(max-width: 768px) 150px, (max-width: 1024px) 170px, 190px"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2 bg-surface-alt px-3 text-center">
-            <svg className="h-8 w-8 text-text-secondary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25z" />
-            </svg>
-            <span className="text-[10px] font-medium text-text-secondary line-clamp-3">{movie.title}</span>
-          </div>
-        )}
-
-        {/* Gradient bas pour lisibilité du titre */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
-
-        {/* Badge score */}
-        {movie.score != null && (
-          <div className="absolute top-2 right-2 rounded-pill bg-secondary px-1.5 py-0.5 text-[10px] font-bold text-bg-primary">
-            {(movie.score * 100).toFixed(0)}%
-          </div>
-        )}
-
-        {/* Badge disponible */}
-        {movie.isAvailable && (
-          <div className="absolute top-2 left-2 rounded-pill bg-success/90 px-2 py-0.5 text-[10px] font-semibold text-bg-primary">
-            Dispo
-          </div>
-        )}
-
-        {/* Titre en bas */}
-        <div className="absolute bottom-0 left-0 right-0 p-2.5">
-          <p className="text-[11px] font-semibold text-text-primary drop-shadow-md line-clamp-2 leading-tight">
-            {movie.title}
-          </p>
-          {movie.releaseDate && (
-            <p className="mt-0.5 text-[10px] text-text-secondary/80">
-              {movie.releaseDate.slice(0, 4)}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Rangée horizontale scrollable ─────────────────────────────────────────────
 
 function SectionRow({ section, onOpen }: { section: HomeSection; onOpen: (id: string) => void }) {
@@ -127,11 +46,11 @@ function SectionRow({ section, onOpen }: { section: HomeSection; onOpen: (id: st
         {section.title}
       </h2>
       <div
-        className="flex gap-3 overflow-x-auto px-6 md:px-12 pb-3 snap-x snap-mandatory"
-        style={{ scrollbarWidth: "none" }}
+        className="flex gap-3 overflow-x-auto h-auto px-6 md:px-12 pb-3 snap-x snap-mandatory"
+        style={{ scrollbarWidth: "auto" }}
       >
         {section.movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} onOpen={onOpen} />
+            <PosterCard key={movie.id} movie={movie} onOpen={onOpen} />
         ))}
       </div>
     </div>
@@ -182,7 +101,6 @@ export default function RecommendationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<Filter>("All");
-  const [scrolled, setScrolled] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -208,12 +126,6 @@ export default function RecommendationsPage() {
     load();
   }, [ready, load]);
 
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-
   if (!ready) return null;
 
   const hero: Movie | undefined = sections[0]?.movies[0];
@@ -222,55 +134,7 @@ export default function RecommendationsPage() {
     <div className="min-h-screen bg-bg-primary text-text-primary">
 
       {/* ── NAVBAR ── */}
-      <header className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled
-          ? "bg-bg-primary/95 backdrop-blur-md shadow-[0_1px_0_rgba(232,224,200,0.06)]"
-          : "bg-gradient-to-b from-bg-primary/80 to-transparent"
-      )}>
-        <div className="flex h-16 items-center justify-between px-6 md:px-12">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="select-none font-display text-xl font-bold tracking-tight text-text-primary"
-          >
-            Recomm<span className="text-secondary">andarr</span>
-          </Link>
-
-          {/* Nav centrale */}
-          <nav className="hidden md:flex items-center gap-7">
-            <Link
-              href="/recommendations"
-              className="text-sm font-semibold text-text-primary transition-colors"
-            >
-              Recommandations
-            </Link>
-            <Link
-              href="/swipe"
-              className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
-            >
-              Swipe
-            </Link>
-          </nav>
-
-          {/* Droite */}
-          <div className="flex items-center gap-4">
-            <button
-              aria-label="Rechercher"
-              className="cursor-pointer text-text-secondary hover:text-text-primary transition-colors"
-            >
-              <IcoSearch />
-            </button>
-            <Link
-              href="/account"
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-text-primary ring-2 ring-transparent hover:ring-secondary/40 transition-all"
-              aria-label="Mon compte"
-            >
-              R
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navbar activePage="recommendations" variant="overlay" />
 
       {/* ── HERO ── */}
       {loading && !hero ? (
@@ -388,7 +252,7 @@ export default function RecommendationsPage() {
       </div>
 
       {/* ── RANGÉES ── */}
-      <div className="pb-20">
+      <div className="pb-28 md:pb-20">
         {error && (
           <p className="px-6 py-10 text-center text-sm text-error md:px-12">{error}</p>
         )}
