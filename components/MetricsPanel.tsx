@@ -18,7 +18,7 @@ export function MetricsPanel({ metrics, swipeCount }: MetricsPanelProps) {
     { label: "Pearson", value: metrics.pearsonCorrelation?.toFixed(3) ?? null, color: "text-secondary" },
     { label: "MAE",     value: metrics.mae?.toFixed(2) ?? null,                 color: "text-accent"    },
     {
-      label: "Biais",
+      label: "Bias",
       value: metrics.bias != null
         ? (metrics.bias >= 0 ? "+" : "") + metrics.bias.toFixed(2)
         : null,
@@ -53,8 +53,8 @@ export function MetricsPanel({ metrics, swipeCount }: MetricsPanelProps) {
         </div>
         <p className="mt-2 text-xs text-text-secondary">
           {metrics.swipesForReliableMetrics - swipeCount > 0
-            ? `Encore ${metrics.swipesForReliableMetrics - swipeCount} swipes`
-            : "Métriques fiables ✓"}
+            ? `${metrics.swipesForReliableMetrics - swipeCount} more swipes`
+            : "Reliable metrics ✓"}
         </p>
       </div>
     </div>

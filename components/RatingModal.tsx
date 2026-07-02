@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import type { Movie, SwipePayload } from "@/types";
 
 const SKIP_REASONS = [
-  { value: 1, label: "Déjà vu" },
-  { value: 2, label: "Pas mon genre" },
-  { value: 3, label: "Pas d'humeur" },
-  { value: 4, label: "Mauvaise note" },
-  { value: 0, label: "Autre" },
+  { value: 1, label: "Already seen" },
+  { value: 2, label: "Not my genre" },
+  { value: 3, label: "Not in the mood" },
+  { value: 4, label: "Bad rating" },
+  { value: 0, label: "Other" },
 ] as const;
 
 interface RatingModalProps {
@@ -35,7 +35,7 @@ export function RatingModal({ movie, direction, onSubmit, onCancel }: RatingModa
             <button
               onClick={onCancel}
               className="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors"
-              aria-label="Fermer"
+              aria-label="Close"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -61,7 +61,7 @@ export function RatingModal({ movie, direction, onSubmit, onCancel }: RatingModa
           <div className="min-w-0">
             <p className="font-semibold text-text-primary line-clamp-1">{movie.title}</p>
             <p className="text-xs text-text-secondary">
-              {direction === "like" ? "Tu sembles intéressé" : "Pas intéressé"}
+              {direction === "like" ? "You seem interested" : "Not interested"}
             </p>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function RatingModal({ movie, direction, onSubmit, onCancel }: RatingModa
         {/* Note de pertinence */}
         <div className="mb-5">
           <p className="mb-3 text-sm font-medium text-text-primary">
-            Note la pertinence de cette recommandation <span className="text-accent">*</span>
+            Rate the relevance of this recommendation <span className="text-accent">*</span>
           </p>
           <div className="flex flex-wrap gap-1.5">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
@@ -87,14 +87,14 @@ export function RatingModal({ movie, direction, onSubmit, onCancel }: RatingModa
               </button>
             ))}
           </div>
-          <p className="mt-2 text-xs text-text-secondary">1 = hors sujet · 10 = exactement ce que je veux</p>
+          <p className="mt-2 text-xs text-text-secondary">1 = off-topic · 10 = exactly what I want</p>
         </div>
 
         {/* Raison (skip seulement) */}
         {direction === "skip" && (
           <div className="mb-5">
             <p className="mb-3 text-sm font-medium text-text-primary">
-              Pourquoi ? <span className="text-accent">*</span>
+              Why? <span className="text-accent">*</span>
             </p>
             <div className="flex flex-wrap gap-2">
               {SKIP_REASONS.map((r) => (
@@ -120,7 +120,7 @@ export function RatingModal({ movie, direction, onSubmit, onCancel }: RatingModa
           disabled={!canSubmit}
           className="w-full cursor-pointer rounded-button bg-primary py-3 text-sm font-semibold text-text-primary transition-all hover:brightness-110 disabled:opacity-40 disabled:pointer-events-none"
         >
-          Valider
+          Submit
         </button>
       </div>
     </div>

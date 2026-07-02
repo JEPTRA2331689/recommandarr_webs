@@ -15,15 +15,15 @@ import { MetricsPanel } from "@/components/MetricsPanel";
 // ── Constantes ────────────────────────────────────────────────────────────────
 
 const SECTIONS = [
-  { value: "for_you",            label: "Pour toi" },
-  { value: "daily_discovery",    label: "Découverte" },
-  { value: "favorite_actors",    label: "Acteurs favoris" },
-  { value: "favorite_directors", label: "Réalisateurs" },
-  { value: "hidden_gems",        label: "Pépites cachées" },
-  { value: "weekly_discovery",   label: "Cette semaine" },
-  { value: "recent_releases",    label: "Récents" },
-  { value: "surprise_me",        label: "Surprise !" },
-  { value: "because_you_liked",  label: "Parce que tu aimes..." },
+  { value: "for_you",            label: "For You" },
+  { value: "daily_discovery",    label: "Discovery" },
+  { value: "favorite_actors",    label: "Favorite Actors" },
+  { value: "favorite_directors", label: "Directors" },
+  { value: "hidden_gems",        label: "Hidden Gems" },
+  { value: "weekly_discovery",   label: "This Week" },
+  { value: "recent_releases",    label: "Recent" },
+  { value: "surprise_me",        label: "Surprise Me!" },
+  { value: "because_you_liked",  label: "Because You Like..." },
 ] as const;
 
 type SectionKey = (typeof SECTIONS)[number]["value"];
@@ -176,7 +176,7 @@ export default function SwipePage() {
               {swipeCount} swipe{swipeCount !== 1 ? "s" : ""}
             </span>
             <Link href="/account" className="rounded-button border border-border px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors">
-              Compte
+              Account
             </Link>
           </div>
         }
@@ -234,12 +234,12 @@ export default function SwipePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18 18 6M6 6l12 12" />
                 </svg>
               </div>
-              <p className="text-sm text-text-secondary">Plus de films à afficher.</p>
+              <p className="text-sm text-text-secondary">No more movies to show.</p>
               <button
                 onClick={loadMovies}
                 className="cursor-pointer rounded-button border border-border px-5 py-2.5 text-sm text-text-secondary hover:text-text-primary transition-colors"
               >
-                Recharger
+                Reload
               </button>
             </div>
           ) : (
@@ -294,7 +294,7 @@ export default function SwipePage() {
                 <button
                   onClick={() => currentMovie && !exitDir && initiateSwipe(currentMovie, "skip")}
                   className="group flex flex-col items-center gap-1.5 cursor-pointer"
-                  aria-label="Passer"
+                  aria-label="Skip"
                 >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-swipe-skip/40 bg-swipe-skip/10 transition-all group-hover:border-swipe-skip group-hover:bg-swipe-skip/20 group-hover:scale-110 group-active:scale-95">
                     <svg className="h-6 w-6 text-swipe-skip" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -308,7 +308,7 @@ export default function SwipePage() {
                 <button
                   onClick={() => currentMovie && router.push(`/movies/${currentMovie.id}?from=swipe`)}
                   className="group flex h-10 w-10 items-center justify-center cursor-pointer rounded-full border border-border bg-surface/60 backdrop-blur-sm transition-all hover:bg-surface hover:border-secondary/40"
-                  aria-label="Détails"
+                  aria-label="Details"
                 >
                   <svg className="h-4 w-4 text-text-secondary group-hover:text-text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
@@ -319,7 +319,7 @@ export default function SwipePage() {
                 <button
                   onClick={() => currentMovie && !exitDir && initiateSwipe(currentMovie, "like")}
                   className="group flex flex-col items-center gap-1.5 cursor-pointer"
-                  aria-label="J'aime"
+                  aria-label="Like"
                 >
                   <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-swipe-like/40 bg-swipe-like/10 transition-all group-hover:border-swipe-like group-hover:bg-swipe-like/20 group-hover:scale-110 group-active:scale-95">
                     <svg className="h-6 w-6 text-swipe-like" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

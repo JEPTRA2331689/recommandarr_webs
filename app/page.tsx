@@ -159,10 +159,10 @@ function AppMockup({ firstMovie, allMovies }: { firstMovie?: TmdbMovie; allMovie
             Recomm<span className="text-secondary">andarr</span>
           </span>
           <div className="flex gap-4">
-            <span className="text-[11px] font-medium text-secondary">Recommandations</span>
+            <span className="text-[11px] font-medium text-secondary">Recommendations</span>
             <span className="text-[11px] text-text-secondary">Swipe</span>
           </div>
-          <span className="rounded-full border border-border px-3 py-0.5 text-[10px] text-text-secondary">Compte</span>
+          <span className="rounded-full border border-border px-3 py-0.5 text-[10px] text-text-secondary">Account</span>
         </div>
 
         {/* Hero banner */}
@@ -176,7 +176,7 @@ function AppMockup({ firstMovie, allMovies }: { firstMovie?: TmdbMovie; allMovie
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/90 to-transparent" />
           <div className="absolute bottom-4 left-6">
-            <p className="text-[9px] font-semibold uppercase tracking-widest text-secondary mb-1">Recommandé pour toi</p>
+            <p className="text-[9px] font-semibold uppercase tracking-widest text-secondary mb-1">Recommended for you</p>
             <p className="font-display text-base font-bold text-text-primary">{heroTitle}</p>
           </div>
           <span className="absolute top-3 right-4 rounded-[4px] bg-secondary px-1.5 py-0.5 text-[9px] font-bold text-bg-primary">{heroScore}</span>
@@ -185,9 +185,9 @@ function AppMockup({ firstMovie, allMovies }: { firstMovie?: TmdbMovie; allMovie
         {/* Rangées */}
         <div className="space-y-4 bg-bg-primary p-4 pb-5">
           {[
-            { label: "Pour vous", startIdx: 0 },
-            { label: "Trésors cachés", startIdx: 5 },
-            { label: firstMovie ? `Parce que tu as aimé ${firstMovie.title}` : "Parce que tu as aimé The Prestige", startIdx: 10 },
+            { label: "For You", startIdx: 0 },
+            { label: "Hidden Gems", startIdx: 5 },
+            { label: firstMovie ? `Because you liked ${firstMovie.title}` : "Because you liked The Prestige", startIdx: 10 },
           ].map((row) => (
             <div key={row.label}>
               <p className="mb-2 px-1 text-[10px] font-semibold text-text-primary truncate">{row.label}</p>
@@ -229,8 +229,8 @@ type DemoCard = {
 };
 
 const FALLBACK_CARDS: DemoCard[] = [
-  { title: "The Prestige",          year: "2006", score: "94", genres: ["Thriller", "Mystère"],    bg: "from-[#0d1b4b] via-[#162555] to-[#1e3a8a]" },
-  { title: "Spirited Away",         year: "2001", score: "97", genres: ["Animation", "Fantastique"], bg: "from-[#0d3b2c] via-[#135e46] to-[#1a7a5e]" },
+  { title: "The Prestige",          year: "2006", score: "94", genres: ["Thriller", "Mystery"],    bg: "from-[#0d1b4b] via-[#162555] to-[#1e3a8a]" },
+  { title: "Spirited Away",         year: "2001", score: "97", genres: ["Animation", "Fantasy"], bg: "from-[#0d3b2c] via-[#135e46] to-[#1a7a5e]" },
   { title: "No Country for Old Men",year: "2007", score: "91", genres: ["Thriller", "Crime"],      bg: "from-[#3b1a05] via-[#6b2d08] to-[#8b3a0a]" },
 ];
 
@@ -277,7 +277,7 @@ function SwipeDeck({ movies: tmdbMovies }: { movies: TmdbMovie[] }) {
               </div>
             )}
             <span className="absolute top-3 right-3 rounded-[5px] bg-secondary px-2 py-0.5 text-[11px] font-bold text-bg-primary">{card.score}%</span>
-            <span className="absolute top-3 left-3 rounded-full bg-success/90 px-2.5 py-0.5 text-[10px] font-semibold text-bg-primary">Dispo</span>
+            <span className="absolute top-3 left-3 rounded-full bg-success/90 px-2.5 py-0.5 text-[10px] font-semibold text-bg-primary">Available</span>
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-bg-primary/95 via-bg-primary/50 to-transparent px-4 pb-2.5 pt-8">
               <p className="font-display text-sm font-bold leading-snug text-text-primary">{card.title}</p>
             </div>
@@ -331,10 +331,10 @@ function SwipeDeck({ movies: tmdbMovies }: { movies: TmdbMovie[] }) {
       </div>
 
       <div className="absolute -bottom-2 flex gap-6">
-        <button aria-label="Passer" className="cursor-pointer flex h-14 w-14 items-center justify-center rounded-full border-2 border-swipe-skip/50 bg-swipe-skip/10 transition-colors hover:bg-swipe-skip/20">
+        <button aria-label="Skip" className="cursor-pointer flex h-14 w-14 items-center justify-center rounded-full border-2 border-swipe-skip/50 bg-swipe-skip/10 transition-colors hover:bg-swipe-skip/20">
           <svg className="h-6 w-6 text-swipe-skip" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
         </button>
-        <button aria-label="J'aime" className="cursor-pointer flex h-14 w-14 items-center justify-center rounded-full border-2 border-swipe-like/50 bg-swipe-like/10 transition-colors hover:bg-swipe-like/20">
+        <button aria-label="Like" className="cursor-pointer flex h-14 w-14 items-center justify-center rounded-full border-2 border-swipe-like/50 bg-swipe-like/10 transition-colors hover:bg-swipe-like/20">
           <svg className="h-6 w-6 text-swipe-like" fill="currentColor" viewBox="0 0 24 24"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
         </button>
       </div>
@@ -429,15 +429,15 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             {isLoggedIn ? (
               <Link href="/recommendations" className="cursor-pointer rounded-[8px] bg-primary px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90">
-                Mes recommandations →
+                My recommendations →
               </Link>
             ) : (
               <>
                 <span className="hidden rounded-full border border-secondary/40 bg-secondary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-secondary sm:flex">
-                  Beta fermée
+                  Closed Beta
                 </span>
                 <Link href="/onboarding" className="cursor-pointer rounded-[8px] bg-primary px-5 py-2.5 text-sm font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90">
-                  Rejoindre →
+                  Join →
                 </Link>
               </>
             )}
@@ -463,32 +463,32 @@ export default function LandingPage() {
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-4 py-1.5">
               <span className="h-1.5 w-1.5 flex-shrink-0 animate-pulse rounded-full bg-secondary" aria-hidden />
               <span className="text-xs font-semibold uppercase tracking-widest text-secondary">
-                {betaStats ? `Beta fermée · ${betaStats.remainingSlots} places restantes` : "Beta fermée · Places limitées"}
+                {betaStats ? `Closed Beta · ${betaStats.remainingSlots} spots left` : "Closed Beta · Limited spots"}
               </span>
             </div>
 
             <p className="mx-auto mb-3 max-w-md text-base font-medium text-text-secondary">
-              Tu as des centaines de films sur ton serveur.{" "}
-              <span className="text-text-primary">Ce soir, tu sais lequel regarder.</span>
+              You have hundreds of movies on your server.{" "}
+              <span className="text-text-primary">Tonight, you know which one to watch.</span>
             </p>
 
             <h1 className="font-display text-5xl font-bold leading-tight text-text-primary md:text-6xl lg:text-7xl">
-              Tinder pour ta<br />
-              <em className="not-italic text-accent">médiathèque perso.</em>
+              Tinder for your<br />
+              <em className="not-italic text-accent">personal media library.</em>
             </h1>
 
             <p className="mx-auto mt-5 max-w-lg text-lg leading-relaxed text-text-secondary">
-              Recommandarr connecte ton <strong className="text-text-primary">Jellyfin</strong> ou
-              ton <strong className="text-text-primary">Plex</strong>, apprend tes goûts à chaque swipe,
-              et te recommande exactement ce qu'il te faut — depuis ta propre bibliothèque.
+              Recommandarr connects your <strong className="text-text-primary">Jellyfin</strong> or
+              your <strong className="text-text-primary">Plex</strong>, learns your tastes with every swipe,
+              and recommends exactly what you need — from your own library.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
               <button onClick={handleCta} className="cursor-pointer rounded-[8px] bg-primary px-8 py-4 text-base font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90">
-                {ctaLabel("Voir mes recommandations →", "Rejoindre la beta →")}
+                {ctaLabel("See my recommendations →", "Join the beta →")}
               </button>
               <a href="#how" className="cursor-pointer rounded-[8px] border border-white/[0.1] bg-white/[0.04] px-8 py-4 text-base font-medium text-text-secondary backdrop-blur-sm transition-colors hover:bg-white/[0.07] hover:text-text-primary">
-                Comment ça marche
+                How it works
               </a>
             </div>
 
@@ -497,14 +497,14 @@ export default function LandingPage() {
                 <span key={s} className="rounded-full border border-white/[0.1] bg-white/[0.03] px-3 py-1 font-medium backdrop-blur-sm">{s}</span>
               ))}
               <span className="mx-1 text-text-secondary/30">·</span>
-              <span className="text-text-secondary/60">100% self-hosted · Gratuit · Open-source</span>
+              <span className="text-text-secondary/60">100% self-hosted · Free · Open-source</span>
             </div>
 
             <div className="mt-12 flex flex-wrap items-center justify-center gap-8 md:gap-14">
               {[
-                { value: betaStats?.activeKeys ?? "—", label: "testeurs actifs" },
-                { value: betaStats?.remainingSlots ?? "—", label: "places restantes", highlight: true },
-                { value: metrics?.totalSwipes != null ? metrics.totalSwipes.toLocaleString("fr-FR") : "—", label: "swipes collectés" },
+                { value: betaStats?.activeKeys ?? "—", label: "active testers" },
+                { value: betaStats?.remainingSlots ?? "—", label: "spots remaining", highlight: true },
+                { value: metrics?.totalSwipes != null ? metrics.totalSwipes.toLocaleString("en-US") : "—", label: "swipes collected" },
               ].map((s) => (
                 <div key={s.label} className="text-center">
                   <p className={`font-display text-3xl font-bold tabular-nums ${s.highlight ? "text-secondary" : "text-text-primary"}`}>{s.value}</p>
@@ -521,7 +521,7 @@ export default function LandingPage() {
         <section className="py-16">
           <FadeIn className="mx-auto max-w-6xl px-6 text-center">
             <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-text-secondary/60">
-              Fonctionne avec ta stack self-hosted
+              Works with your self-hosted stack
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6">
               {INTEGRATIONS.map((p) => <IntegrationLogo key={p.name} p={p} />)}
@@ -536,27 +536,27 @@ export default function LandingPage() {
               <FadeIn>
                 <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Privacy first</p>
                 <h2 className="font-display text-4xl font-bold text-text-primary">
-                  Pas de compte traceable.<br />Pas de données perso.
+                  No trackable account.<br />No personal data.
                 </h2>
                 <p className="mt-4 max-w-sm leading-relaxed text-text-secondary">
-                  On est en beta — on demande juste <strong className="text-text-primary">un email</strong> pour
-                  éviter les abus. Pas de newsletter, pas de tracking, pas de revente. Jamais.
+                  We're in beta — we only ask for <strong className="text-text-primary">an email</strong> to
+                  prevent abuse. No newsletter, no tracking, no reselling. Ever.
                 </p>
                 <p className="mt-3 max-w-sm leading-relaxed text-text-secondary">
-                  Après l'import, tu reçois une <strong className="font-semibold text-secondary">clé unique XXXX-YYYY</strong>.
-                  C'est ton seul identifiant — non rattachable à une identité réelle.
+                  After import, you receive a <strong className="font-semibold text-secondary">unique key XXXX-YYYY</strong>.
+                  That's your only identifier — not linkable to a real identity.
                 </p>
                 <button onClick={handleCta} className="cursor-pointer mt-7 inline-block rounded-[8px] bg-primary px-7 py-3.5 text-sm font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90">
-                  {ctaLabel("Accéder à mes recommandations →", "Demander l'accès →")}
+                  {ctaLabel("Access my recommendations →", "Request access →")}
                 </button>
               </FadeIn>
 
               <div className="space-y-3">
                 {[
-                  { icon: <IcoKey />, title: "Clé XXXX-YYYY — ton seul identifiant", desc: "Note-la. Elle ne peut pas être retrouvée via ton email ni liée à une identité réelle.", color: "text-secondary border-secondary/20", delay: 100 },
-                  { icon: <IcoShield />, title: "Connexion via Jellyfin / Plex", desc: "Tu te connectes avec tes identifiants existants. Aucun nouveau mot de passe.", color: "text-success border-success/20", delay: 200 },
-                  { icon: <IcoFilm />, title: "Tes fichiers restent sur ton serveur", desc: "Recommandarr ne stocke que les métadonnées TMDB et tes swipes.", color: "text-secondary border-secondary/20", delay: 300 },
-                  { icon: <IcoServer />, title: "100% self-hosted · Gratuit", desc: "Pas de SaaS, pas de freemium. Un outil open-source comme Jellyfin.", color: "text-warning border-warning/20", delay: 400 },
+                  { icon: <IcoKey />, title: "Key XXXX-YYYY — your only identifier", desc: "Save it. It cannot be retrieved via your email or linked to a real identity.", color: "text-secondary border-secondary/20", delay: 100 },
+                  { icon: <IcoShield />, title: "Sign in via Jellyfin / Plex", desc: "You log in with your existing credentials. No new password needed.", color: "text-success border-success/20", delay: 200 },
+                  { icon: <IcoFilm />, title: "Your files stay on your server", desc: "Recommandarr only stores TMDB metadata and your swipes.", color: "text-secondary border-secondary/20", delay: 300 },
+                  { icon: <IcoServer />, title: "100% self-hosted · Free", desc: "No SaaS, no freemium. An open-source tool like Jellyfin.", color: "text-warning border-warning/20", delay: 400 },
                 ].map((item) => (
                   <FadeIn key={item.title} delay={item.delay as 100 | 200 | 300 | 400}>
                     <div className="flex gap-4 rounded-[12px] border border-white/[0.07] bg-white/[0.025] p-4 backdrop-blur-sm transition-colors hover:bg-white/[0.05]">
@@ -577,10 +577,10 @@ export default function LandingPage() {
         <section className="py-24">
           <div className="mx-auto max-w-5xl px-6">
             <FadeIn className="mb-14 text-center">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">La différence</p>
-              <h2 className="font-display text-4xl font-bold text-text-primary">Fini le scrolling infini.</h2>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">The difference</p>
+              <h2 className="font-display text-4xl font-bold text-text-primary">No more endless scrolling.</h2>
               <p className="mx-auto mt-3 max-w-md text-text-secondary">
-                Contrairement à Trakt ou Letterboxd, Recommandarr sait ce qui est déjà sur <em>ton</em> serveur.
+                Unlike Trakt or Letterboxd, Recommandarr knows what's already on <em>your</em> server.
               </p>
             </FadeIn>
             <div className="grid gap-5 md:grid-cols-2">
@@ -588,10 +588,10 @@ export default function LandingPage() {
                 <div className="rounded-[16px] border border-white/[0.07] bg-white/[0.02] p-7 backdrop-blur-sm">
                   <div className="mb-5 flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full border border-error/30 bg-error/10 text-error"><IcoX /></div>
-                    <p className="font-semibold text-text-secondary">Avant Recommandarr</p>
+                    <p className="font-semibold text-text-secondary">Before Recommandarr</p>
                   </div>
                   <ul className="space-y-3">
-                    {["Tu scrolles ta bibliothèque pendant 30 minutes","Tu sais pas quoi choisir, tu remets Netflix","Tu re-regardes des films déjà vus","Letterboxd recommande des films pas dispo chez toi","Ton historique Jellyfin sert à rien"].map((t) => (
+                    {["You scroll your library for 30 minutes","Can't decide, you go back to Netflix","You rewatch movies you've already seen","Letterboxd recommends films not available on your server","Your Jellyfin history is useless"].map((t) => (
                       <li key={t} className="flex items-start gap-3 text-sm text-text-secondary">
                         <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-error/60" aria-hidden />{t}
                       </li>
@@ -603,10 +603,10 @@ export default function LandingPage() {
                 <div className="rounded-[16px] border border-secondary/25 bg-secondary/[0.04] p-7 backdrop-blur-sm">
                   <div className="mb-5 flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full border border-success/30 bg-success/10 text-success"><IcoCheck /></div>
-                    <p className="font-semibold text-text-primary">Avec Recommandarr</p>
+                    <p className="font-semibold text-text-primary">With Recommandarr</p>
                   </div>
                   <ul className="space-y-3">
-                    {["Un film à la fois — décision en 5 secondes","Le moteur apprend de chaque swipe ce que tu aimes","Recommandations depuis ta bibliothèque, pas un catalogue externe","Film pas dispo ? Demande-le via Seerr en un clic","Ton historique Jellyfin devient le carburant du moteur"].map((t) => (
+                    {["One movie at a time — decision in 5 seconds","The engine learns your tastes from every swipe","Recommendations from your library, not an external catalog","Movie not available? Request it via Seerr in one click","Your Jellyfin history becomes the engine's fuel"].map((t) => (
                       <li key={t} className="flex items-start gap-3 text-sm text-text-primary">
                         <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-secondary" aria-hidden />{t}
                       </li>
@@ -623,9 +623,9 @@ export default function LandingPage() {
           <div className="mx-auto max-w-6xl px-6">
             <div className="grid gap-5 md:grid-cols-3">
               {[
-                { icon: <IcoServer />, title: "Ton serveur, tes règles", desc: "Recommandarr lit ta bibliothèque Jellyfin ou Plex. Pas de cloud, pas de données tierces. Tout reste chez toi.", color: "text-secondary border-secondary/20", delay: 100 },
-                { icon: <IcoSwipe />, title: "Un film à la fois", desc: "Droite = intéressé, gauche = pas pour moi. Plus tu swipes, plus le moteur te connaît. Décision en secondes.", color: "text-accent border-accent/20", delay: 200 },
-                { icon: <IcoSparkle />, title: "Le moteur apprend de toi", desc: "Tu notes chaque suggestion de 1 à 10. On mesure si le moteur pense comme toi. Il s'affine à chaque session.", color: "text-secondary border-secondary/20", delay: 300 },
+                { icon: <IcoServer />, title: "Your server, your rules", desc: "Recommandarr reads your Jellyfin or Plex library. No cloud, no third-party data. Everything stays with you.", color: "text-secondary border-secondary/20", delay: 100 },
+                { icon: <IcoSwipe />, title: "One movie at a time", desc: "Right = interested, left = not for me. The more you swipe, the better the engine knows you. Decisions in seconds.", color: "text-accent border-accent/20", delay: 200 },
+                { icon: <IcoSparkle />, title: "The engine learns from you", desc: "You rate each suggestion from 1 to 10. We measure how well the engine thinks like you. It improves every session.", color: "text-secondary border-secondary/20", delay: 300 },
               ].map((c) => (
                 <FadeIn key={c.title} delay={c.delay as 100 | 200 | 300}>
                   <div className="h-full rounded-[16px] border border-white/[0.07] bg-white/[0.025] p-7 backdrop-blur-sm transition-colors hover:bg-white/[0.05]">
@@ -647,18 +647,18 @@ export default function LandingPage() {
                 <SwipeDeck movies={tmdbMovies} />
               </FadeIn>
               <FadeIn className="order-1 lg:order-2">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Comment ça marche</p>
-                <h2 className="font-display text-4xl font-bold text-text-primary">Chaque swipe<br />entraîne le moteur</h2>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">How it works</p>
+                <h2 className="font-display text-4xl font-bold text-text-primary">Every swipe<br />trains the engine</h2>
                 <p className="mt-4 leading-relaxed text-text-secondary">
-                  Le moteur calcule un score de pertinence selon ton profil. Tu le notes de 1 à 10.
-                  Il apprend de l'écart entre sa prédiction et ta note.
+                  The engine calculates a relevance score based on your profile. You rate it from 1 to 10.
+                  It learns from the gap between its prediction and your rating.
                 </p>
                 <div className="mt-8 space-y-4">
                   {[
-                    { step: "01", title: "Connecte ta bibliothèque", desc: "Entre l'URL + clé API de ton Jellyfin. L'import prend moins d'une minute.", cls: "text-secondary border-secondary/30 bg-secondary/[0.08]" },
-                    { step: "02", title: "Swipe tes films", desc: "Droite = intéressé · Gauche = pas pour moi. Un film à la fois.", cls: "text-success border-success/30 bg-success/[0.08]" },
-                    { step: "03", title: "Note la suggestion (1→10)", desc: "Note obligatoire à chaque swipe. C'est ce qui calibre le moteur.", cls: "text-warning border-warning/30 bg-warning/[0.08]" },
-                    { step: "04", title: "Reçois tes recommandations", desc: "Sections Netflix-style générées depuis ta propre bibliothèque.", cls: "text-secondary border-secondary/30 bg-secondary/[0.08]" },
+                    { step: "01", title: "Connect your library", desc: "Enter the URL + API key of your Jellyfin. Import takes less than a minute.", cls: "text-secondary border-secondary/30 bg-secondary/[0.08]" },
+                    { step: "02", title: "Swipe your movies", desc: "Right = interested · Left = not for me. One movie at a time.", cls: "text-success border-success/30 bg-success/[0.08]" },
+                    { step: "03", title: "Rate the suggestion (1→10)", desc: "Required rating at each swipe. This is what calibrates the engine.", cls: "text-warning border-warning/30 bg-warning/[0.08]" },
+                    { step: "04", title: "Get your recommendations", desc: "Netflix-style sections generated from your own library.", cls: "text-secondary border-secondary/30 bg-secondary/[0.08]" },
                   ].map((item) => (
                     <div key={item.step} className="flex gap-4">
                       <span className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[8px] border text-xs font-bold ${item.cls}`}>{item.step}</span>
@@ -678,20 +678,20 @@ export default function LandingPage() {
         <section className="bg-surface py-20">
           <div className="mx-auto max-w-6xl px-6">
             <FadeIn>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Recommandations</p>
-              <h2 className="font-display text-4xl font-bold text-text-primary">Ton Netflix perso,<br />depuis tes propres films.</h2>
-              <p className="mt-3 max-w-lg text-text-secondary">L'accueil génère plusieurs rangées de suggestions, chacune avec une logique différente.</p>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Recommendations</p>
+              <h2 className="font-display text-4xl font-bold text-text-primary">Your personal Netflix,<br />from your own movies.</h2>
+              <p className="mt-3 max-w-lg text-text-secondary">The home screen generates multiple suggestion rows, each with a different logic.</p>
             </FadeIn>
             <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { label: "Pour vous", desc: "Recommandations personnalisées basées sur ton profil complet", delay: 100 },
-                { label: "Trésors cachés", desc: "Films sous-estimés, bien notés, peu populaires", delay: 150 },
-                { label: "Parce que tu as aimé…", desc: "Basé sur ton dernier coup de cœur", delay: 200 },
-                { label: "Tes acteurs préférés", desc: "Déduit automatiquement de ton historique", delay: 300 },
-                { label: "Tes réalisateurs", desc: "Calculé sur tes habitudes de visionnage", delay: 100 },
-                { label: "Sorties récentes", desc: "Les nouveautés qui correspondent à tes goûts", delay: 150 },
-                { label: "Découverte du jour", desc: "Cache régénéré chaque jour, qualité garantie", delay: 200 },
-                { label: "Surprise-moi", desc: "Sélection aléatoire avec seuil de qualité minimum", delay: 300 },
+                { label: "For You", desc: "Personalized recommendations based on your full profile", delay: 100 },
+                { label: "Hidden Gems", desc: "Underrated, well-rated, low-popularity films", delay: 150 },
+                { label: "Because you liked…", desc: "Based on your last favorite", delay: 200 },
+                { label: "Your favorite actors", desc: "Automatically derived from your history", delay: 300 },
+                { label: "Your directors", desc: "Calculated from your viewing habits", delay: 100 },
+                { label: "Recent releases", desc: "New titles that match your tastes", delay: 150 },
+                { label: "Daily discovery", desc: "Cache refreshed every day, quality guaranteed", delay: 200 },
+                { label: "Surprise me", desc: "Random selection with a minimum quality threshold", delay: 300 },
               ].map((s) => (
                 <FadeIn key={s.label} delay={s.delay as 100 | 150 | 200 | 300}>
                   <div className="h-full rounded-[12px] border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur-sm transition-colors hover:border-secondary/25 hover:bg-white/[0.04]">
@@ -708,19 +708,19 @@ export default function LandingPage() {
         <section className="py-24">
           <div className="mx-auto max-w-6xl px-6">
             <FadeIn>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Sous le capot</p>
-              <h2 className="font-display text-4xl font-bold text-text-primary">Le moteur sait<br />quand il se trompe.</h2>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Under the hood</p>
+              <h2 className="font-display text-4xl font-bold text-text-primary">The engine knows<br />when it's wrong.</h2>
               <p className="mt-3 max-w-lg text-text-secondary">
-                À chaque swipe tu notes la suggestion. On compare ta note au score prédit.
-                Plus les deux se rapprochent, mieux le moteur te connaît.
+                At every swipe you rate the suggestion. We compare your rating to the predicted score.
+                The closer the two, the better the engine knows you.
               </p>
             </FadeIn>
             <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { label: "Alignement", sub: "Pearson", desc: "Tes goûts vs les prédictions. Proche de 1 = le moteur pense comme toi.", value: metrics?.pearsonCorrelation != null ? metrics.pearsonCorrelation.toFixed(3) : "—", color: "text-secondary", delay: 100 },
-                { label: "Écart moyen", sub: "MAE", desc: "Différence entre ce que le moteur prédit et ce que tu notes.", value: metrics?.mae != null ? metrics.mae.toFixed(2) : "—", color: "text-error", delay: 200 },
-                { label: "Optimisme", sub: "Biais", desc: "+ = trop confiant · − = trop prudent.", value: metrics?.bias != null ? (metrics.bias >= 0 ? "+" : "") + metrics.bias.toFixed(2) : "—", color: "text-text-primary", delay: 300 },
-                { label: "Calibration", sub: "Progression", desc: "Volume de données vers des recommandations fiables.", value: metrics?.coldStartProgress != null ? `${Math.round(metrics.coldStartProgress * 100)}%` : "—", color: "text-success", delay: 400 },
+                { label: "Alignment", sub: "Pearson", desc: "Your tastes vs predictions. Close to 1 = the engine thinks like you.", value: metrics?.pearsonCorrelation != null ? metrics.pearsonCorrelation.toFixed(3) : "—", color: "text-secondary", delay: 100 },
+                { label: "Avg. error", sub: "MAE", desc: "Difference between what the engine predicts and what you rate.", value: metrics?.mae != null ? metrics.mae.toFixed(2) : "—", color: "text-error", delay: 200 },
+                { label: "Optimism", sub: "Bias", desc: "+ = too confident · − = too cautious.", value: metrics?.bias != null ? (metrics.bias >= 0 ? "+" : "") + metrics.bias.toFixed(2) : "—", color: "text-text-primary", delay: 300 },
+                { label: "Calibration", sub: "Progress", desc: "Data volume toward reliable recommendations.", value: metrics?.coldStartProgress != null ? `${Math.round(metrics.coldStartProgress * 100)}%` : "—", color: "text-success", delay: 400 },
               ].map((m) => (
                 <FadeIn key={m.sub} delay={m.delay as 100 | 200 | 300 | 400}>
                   <div className="rounded-[16px] border border-white/[0.07] bg-white/[0.025] p-6 backdrop-blur-sm">
@@ -736,9 +736,9 @@ export default function LandingPage() {
               <FadeIn className="mt-5">
                 <div className="rounded-[12px] border border-white/[0.07] bg-white/[0.02] px-6 py-4 backdrop-blur-sm">
                   <div className="mb-3 flex items-center justify-between text-sm">
-                    <span className="text-text-secondary">Progression collective vers la fiabilité</span>
+                    <span className="text-text-secondary">Collective progress toward reliability</span>
                     <span className="font-medium tabular-nums text-text-primary">
-                      {metrics.totalSwipes.toLocaleString("fr-FR")} / {metrics.swipesForReliableMetrics.toLocaleString("fr-FR")} swipes
+                      {metrics.totalSwipes.toLocaleString("en-US")} / {metrics.swipesForReliableMetrics.toLocaleString("en-US")} swipes
                     </span>
                   </div>
                   <div className="h-1.5 w-full rounded-full bg-white/[0.06]" role="progressbar" aria-valuenow={Math.min(100, (metrics.totalSwipes / (metrics.swipesForReliableMetrics || 1)) * 100)} aria-valuemin={0} aria-valuemax={100}>
@@ -756,20 +756,20 @@ export default function LandingPage() {
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-4 py-1.5">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-secondary" aria-hidden />
               <span className="text-xs font-semibold uppercase tracking-widest text-secondary">
-                {betaStats ? `${betaStats.remainingSlots} places restantes` : "Accès limité"}
+                {betaStats ? `${betaStats.remainingSlots} spots left` : "Limited access"}
               </span>
             </div>
-            <h2 className="font-display text-4xl font-bold text-text-primary">Ce soir,<br />tu sais quoi regarder.</h2>
+            <h2 className="font-display text-4xl font-bold text-text-primary">Tonight,<br />you know what to watch.</h2>
             <p className="mt-4 text-text-secondary">
-              Connecte ta bibliothèque Jellyfin ou Plex, reçois ta clé unique — et commence à swiper dans la minute.
+              Connect your Jellyfin or Plex library, get your unique key — and start swiping in under a minute.
             </p>
             <button onClick={handleCta} className="cursor-pointer mt-8 inline-block rounded-[8px] bg-primary px-10 py-4 text-base font-semibold text-text-primary transition-colors hover:brightness-110 active:brightness-90">
-              {ctaLabel("Voir mes recommandations →", "Rejoindre la beta →")}
+              {ctaLabel("See my recommendations →", "Join the beta →")}
             </button>
             <p className="mt-5 text-xs text-text-secondary/70">
               {isLoggedIn
-                ? "Tu es connecté · Swipe, découvre, profite."
-                : "Un email pour éviter les abus · Clé unique XXXX-YYYY · Aucun mot de passe Recommandarr"}
+                ? "You're signed in · Swipe, discover, enjoy."
+                : "One email to prevent abuse · Unique key XXXX-YYYY · No Recommandarr password"}
             </p>
           </FadeIn>
         </section>

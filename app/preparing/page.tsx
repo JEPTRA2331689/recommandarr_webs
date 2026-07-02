@@ -19,26 +19,26 @@ interface Step {
 const INITIAL_STEPS: Step[] = [
   {
     id: "login",
-    label: "Activation de ton accès",
-    sublabel: "Génération du token d'authentification",
+    label: "Activating your access",
+    sublabel: "Generating authentication token",
     status: "pending",
   },
   {
     id: "profile",
-    label: "Construction du profil de goûts",
-    sublabel: "Analyse des genres, réalisateurs et acteurs de ta bibliothèque",
+    label: "Building your taste profile",
+    sublabel: "Analyzing genres, directors and actors from your library",
     status: "pending",
   },
   {
     id: "discover",
-    label: "Génération de ton premier Discover",
-    sublabel: "Le moteur calcule tes premières recommandations personnalisées",
+    label: "Generating your first Discover",
+    sublabel: "The engine calculates your first personalized recommendations",
     status: "pending",
   },
   {
     id: "ready",
-    label: "Moteur prêt",
-    sublabel: "Tout est en place pour ton premier swipe",
+    label: "Engine ready",
+    sublabel: "Everything is set for your first swipe",
     status: "pending",
   },
 ];
@@ -142,7 +142,7 @@ export default function PreparingPage() {
         setStep("login", "done");
       } catch {
         setStep("login", "error");
-        setFatalError("Impossible d'activer l'accès. Retourne à l'onboarding et réessaie.");
+        setFatalError("Unable to activate access. Go back to onboarding and try again.");
         return;
       }
 
@@ -190,13 +190,13 @@ export default function PreparingPage() {
           <svg className="mx-auto mb-4 h-10 w-10 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
-          <p className="font-semibold text-text-primary mb-2">Une erreur est survenue</p>
+          <p className="font-semibold text-text-primary mb-2">An error occurred</p>
           <p className="text-sm text-text-secondary mb-6">{fatalError}</p>
           <Link
             href="/onboarding"
             className="inline-block rounded-button bg-primary px-6 py-3 text-sm font-semibold text-text-primary hover:brightness-110 transition-all"
           >
-            Retourner à l'onboarding
+            Back to onboarding
           </Link>
         </div>
       </div>
@@ -224,8 +224,8 @@ export default function PreparingPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                   </svg>
                 </div>
-                <h1 className="font-display text-3xl font-bold text-text-primary">Tout est prêt !</h1>
-                <p className="mt-2 text-text-secondary">Ton profil est actif. Commence à swiper.</p>
+                <h1 className="font-display text-3xl font-bold text-text-primary">You're all set!</h1>
+                <p className="mt-2 text-text-secondary">Your profile is active. Start swiping.</p>
               </>
             ) : (
               <>
@@ -244,8 +244,8 @@ export default function PreparingPage() {
                     {Math.round(progress)}%
                   </span>
                 </div>
-                <h1 className="font-display text-3xl font-bold text-text-primary">Préparation en cours…</h1>
-                <p className="mt-2 text-text-secondary">On configure tout pour toi, ça prend quelques secondes.</p>
+                <h1 className="font-display text-3xl font-bold text-text-primary">Setting things up…</h1>
+                <p className="mt-2 text-text-secondary">We're configuring everything for you, this takes a few seconds.</p>
               </>
             )}
           </div>
@@ -302,7 +302,7 @@ export default function PreparingPage() {
           {/* Clé d'accès */}
           {allDone && accessKey && (
             <div className="mb-6 rounded-card border border-border bg-surface p-5 text-center">
-              <p className="text-xs text-text-secondary mb-2">Ta clé d'accès — note-la !</p>
+              <p className="text-xs text-text-secondary mb-2">Your access key — save it!</p>
               <p className="font-display text-3xl font-bold tracking-[0.25em] text-secondary mb-3">
                 {accessKey}
               </p>
@@ -314,7 +314,7 @@ export default function PreparingPage() {
                 }}
                 className="rounded-pill border border-secondary/30 px-4 py-1.5 text-xs text-secondary hover:bg-secondary/10 transition-colors"
               >
-                {copied ? "✓ Copié !" : "Copier la clé"}
+                {copied ? "✓ Copied!" : "Copy key"}
               </button>
             </div>
           )}
@@ -326,13 +326,13 @@ export default function PreparingPage() {
                 onClick={() => router.push("/swipe")}
                 className="w-full rounded-button bg-primary py-4 text-sm font-semibold text-text-primary transition-all hover:brightness-110 active:scale-[0.98]"
               >
-                Commencer à swiper →
+                Start swiping →
               </button>
               <button
                 onClick={() => router.push("/account")}
                 className="w-full rounded-button border border-border py-3 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
               >
-                Mon compte
+                My account
               </button>
             </div>
           )}
@@ -340,7 +340,7 @@ export default function PreparingPage() {
           {/* Message pendant le chargement */}
           {!allDone && !fatalError && (
             <p className="text-center text-xs text-text-secondary">
-              Ne ferme pas cette page — la préparation se lance en ce moment.
+              Don't close this page — setup is running right now.
             </p>
           )}
 

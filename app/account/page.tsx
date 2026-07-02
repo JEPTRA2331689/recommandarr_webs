@@ -47,24 +47,24 @@ function IconSparkle() {
 const INITIAL_ACTIONS: Omit<Action, "status" | "lastMessage">[] = [
   {
     id: "update",
-    label: "Mettre à jour le profil",
-    desc: "Recalcule tes goûts à partir de tous tes swipes. À faire après une session de swipe intensive.",
+    label: "Update taste profile",
+    desc: "Recalculates your preferences from all your swipes. Run this after an intensive swipe session.",
     endpoint: "/api/recommendations/profile/update",
     method: "POST",
     icon: <IconBrain />,
   },
   {
     id: "discover",
-    label: "Régénérer le Discover",
-    desc: "Recalcule tes sections de recommandations personnalisées. À faire si tes recommandations semblent obsolètes.",
+    label: "Regenerate Discover",
+    desc: "Recalculates your personalized recommendation sections. Run this if your recommendations feel stale.",
     endpoint: "/api/recommendations/discover",
     method: "POST",
     icon: <IconRefresh />,
   },
   {
     id: "enrich",
-    label: "Enrichir la bibliothèque",
-    desc: "Récupère les métadonnées TMDB manquantes (affiches, synopsis, genres) pour les films importés.",
+    label: "Enrich library",
+    desc: "Fetches missing TMDB metadata (posters, overviews, genres) for imported movies.",
     endpoint: "/api/tmdb/enrich",
     method: "POST",
     icon: <IconSparkle />,
@@ -105,7 +105,7 @@ function ActionCard({
         disabled={isRunning}
         className="flex-shrink-0 rounded-button border border-border px-4 py-2 text-xs font-semibold text-text-secondary transition-all hover:border-secondary/40 hover:text-secondary disabled:opacity-40 disabled:pointer-events-none"
       >
-        {isRunning ? "En cours…" : "Lancer"}
+        {isRunning ? "Running…" : "Run"}
       </button>
     </div>
   );
@@ -156,18 +156,18 @@ export default function AccountPage() {
     updateAction(id, { status: "running", lastMessage: "" });
     try {
       await api.post(action.endpoint);
-      updateAction(id, { status: "done", lastMessage: "Terminé avec succès." });
+      updateAction(id, { status: "done", lastMessage: "Completed successfully." });
     } catch (e: unknown) {
       updateAction(id, {
         status: "error",
-        lastMessage: e instanceof Error ? e.message : "Erreur — vérifie que le backend est actif.",
+        lastMessage: e instanceof Error ? e.message : "Error — check that the backend is running.",
       });
     }
   }
 
   async function handleDelete() {
     if (!accessKey || deleteInput.trim().toUpperCase() !== accessKey) {
-      setDeleteError("La clé saisie ne correspond pas à ton identifiant.");
+      setDeleteError("The key you entered does not match your identifier.");
       return;
     }
     setDeleteError("");
@@ -178,7 +178,7 @@ export default function AccountPage() {
       logout();
       router.replace("/");
     } catch (e: unknown) {
-      setDeleteError(e instanceof Error ? e.message : "Erreur lors de la suppression.");
+      setDeleteError(e instanceof Error ? e.message : "Error during deletion.");
       setDeleteLoading(false);
     }
   }
@@ -200,18 +200,18 @@ export default function AccountPage() {
 
         {/* ── Identifiant ─────────────────────────────────── */}
         <section>
-          <h1 className="font-display text-2xl font-bold text-text-primary mb-6">Mon compte</h1>
+          <h1 className="font-display text-2xl font-bold text-text-primary mb-6">My Account</h1>
           <div className="rounded-card border border-secondary/25 bg-secondary/5 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary mb-1">Clé d'accès unique</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary mb-1">Unique access key</p>
               <p className="font-display text-3xl font-bold tracking-[0.2em] text-secondary">{accessKey}</p>
-              <p className="mt-1 text-xs text-text-secondary">C'est ton seul identifiant. Ne la partage pas.</p>
+              <p className="mt-1 text-xs text-text-secondary">This is your only identifier. Don't share it.</p>
             </div>
             <button
               onClick={() => navigator.clipboard.writeText(accessKey ?? "")}
               className="flex-shrink-0 rounded-pill border border-secondary/30 px-4 py-2 text-sm text-secondary hover:bg-secondary/10 transition-colors"
             >
-              Copier
+              Copy
             </button>
           </div>
         </section>
@@ -219,7 +219,7 @@ export default function AccountPage() {
         {/* ── Métriques ────────────────────────────────────── */}
         {metrics && (
           <section>
-            <h2 className="font-display text-lg font-semibold text-text-primary mb-4">État du moteur</h2>
+            <h2 className="font-display text-lg font-semibold text-text-primary mb-4">Engine status</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: "Swipes", value: totalSwipes.toString(), color: "text-text-primary" },
@@ -239,8 +239,8 @@ export default function AccountPage() {
               </div>
               <p className="mt-1.5 text-xs text-text-secondary">
                 {(metrics.swipesForReliableMetrics - totalSwipes) > 0
-                  ? `Encore ${metrics.swipesForReliableMetrics - totalSwipes} swipes pour des métriques fiables`
-                  : "Métriques fiables ✓"}
+                  ? `${metrics.swipesForReliableMetrics - totalSwipes} more swipes for reliable metrics`
+                  : "Reliable metrics ✓"}
               </p>
             </div>
           </section>
@@ -248,8 +248,8 @@ export default function AccountPage() {
 
         {/* ── Actions moteur ───────────────────────────────── */}
         <section>
-          <h2 className="font-display text-lg font-semibold text-text-primary mb-1">Actions manuelles</h2>
-          <p className="text-sm text-text-secondary mb-4">Lance manuellement les opérations du moteur de recommandation.</p>
+          <h2 className="font-display text-lg font-semibold text-text-primary mb-1">Manual actions</h2>
+          <p className="text-sm text-text-secondary mb-4">Manually trigger recommendation engine operations.</p>
           <div className="space-y-3">
             {actions.map((action) => (
               <ActionCard key={action.id} action={action} onRun={runAction} />
@@ -263,28 +263,28 @@ export default function AccountPage() {
             href="/swipe"
             className="flex-1 rounded-button bg-primary py-3 text-center text-sm font-semibold text-text-primary hover:brightness-110 transition-all"
           >
-            Swiper des films →
+            Swipe movies →
           </Link>
           <Link
             href="/recommendations"
             className="flex-1 rounded-button border border-border py-3 text-center text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
           >
-            Mes recommandations
+            My recommendations
           </Link>
         </section>
 
         {/* ── Zone danger ──────────────────────────────────── */}
         <section>
           <div className="rounded-card border border-error/25 bg-error/5 p-6">
-            <h2 className="font-display text-base font-semibold text-error mb-1">Zone dangereuse</h2>
+            <h2 className="font-display text-base font-semibold text-error mb-1">Danger zone</h2>
             <p className="text-sm text-text-secondary mb-4">
-              Supprimer ton compte efface définitivement ta clé d'accès, ton profil de goûts et tous tes swipes. Cette action est irréversible.
+              Deleting your account permanently erases your access key, taste profile, and all your swipes. This action is irreversible.
             </p>
             <button
               onClick={() => setShowDeleteModal(true)}
               className="rounded-button border border-error/40 px-5 py-2.5 text-sm font-semibold text-error hover:bg-error/10 transition-colors"
             >
-              Supprimer mon compte
+              Delete my account
             </button>
           </div>
         </section>
@@ -302,14 +302,14 @@ export default function AccountPage() {
                 </svg>
               </div>
               <div>
-                <p className="font-semibold text-text-primary">Supprimer le compte ?</p>
-                <p className="mt-0.5 text-xs text-text-secondary">Cette action est définitive et irréversible.</p>
+                <p className="font-semibold text-text-primary">Delete account?</p>
+                <p className="mt-0.5 text-xs text-text-secondary">This action is permanent and irreversible.</p>
               </div>
             </div>
 
             <div className="mb-4 rounded-input border border-error/20 bg-error/5 px-3 py-2.5">
               <p className="text-xs text-text-secondary">
-                Écris ta clé d'accès pour confirmer :{" "}
+                Type your access key to confirm:{" "}
                 <span className="font-mono font-bold text-error">{accessKey}</span>
               </p>
             </div>
@@ -334,7 +334,7 @@ export default function AccountPage() {
                 onClick={() => setShowDeleteModal(false)}
                 className="flex-1 rounded-button border border-border py-2.5 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
               >
-                Annuler
+                Cancel
               </button>
               <button
                 onClick={handleDelete}
@@ -344,9 +344,9 @@ export default function AccountPage() {
                 {deleteLoading ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="h-3.5 w-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                    Suppression…
+                    Deleting…
                   </span>
-                ) : "Supprimer définitivement"}
+                ) : "Delete permanently"}
               </button>
             </div>
           </div>

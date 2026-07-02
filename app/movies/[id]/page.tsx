@@ -114,7 +114,7 @@ export default function MovieDetailPage() {
           setCredits(cred.cast ?? []);
         });
       })
-      .catch(() => setError("Film introuvable."))
+      .catch(() => setError("Movie not found."))
       .finally(() => setLoading(false));
   }, [ready, id]);
 
@@ -151,9 +151,9 @@ export default function MovieDetailPage() {
   if (error || !movie) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6">
-        <p className="text-text-secondary">{error || "Film introuvable."}</p>
+        <p className="text-text-secondary">{error || "Movie not found."}</p>
         <button onClick={() => router.back()} className="text-sm text-secondary underline-offset-2 hover:underline">
-          ← Retour
+          ← Back
         </button>
       </div>
     );
@@ -191,7 +191,7 @@ export default function MovieDetailPage() {
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
           </svg>
-          Retour
+          Back
         </button>
       </div>
 
@@ -229,7 +229,7 @@ export default function MovieDetailPage() {
                 <svg className="h-4 w-4" fill={swipeDone === "like" ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                 </svg>
-                {swipeDone === "like" ? "Aimé !" : "J'aime"}
+                {swipeDone === "like" ? "Liked!" : "Like"}
               </button>
 
               <button
@@ -245,32 +245,32 @@ export default function MovieDetailPage() {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
-                {swipeDone === "skip" ? "Noté" : "Pas pour moi"}
+                {swipeDone === "skip" ? "Rated" : "Not for me"}
               </button>
             </div>
 
             {/* Détails inline */}
             <div className="mt-6 border-t border-border/40" />
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-              {year && <DetailRow label="Année">{year}</DetailRow>}
-              {runtime && <DetailRow label="Durée">{runtime}</DetailRow>}
+              {year && <DetailRow label="Year">{year}</DetailRow>}
+              {runtime && <DetailRow label="Runtime">{runtime}</DetailRow>}
               {movie.tmdbRating > 0 && (
-                <DetailRow label="Note TMDB">
+                <DetailRow label="TMDB Rating">
                   <RatingStars rating={movie.tmdbRating} />
                 </DetailRow>
               )}
-              <DetailRow label="Statut">
+              <DetailRow label="Status">
                 <span className={cn(
                   "rounded-pill px-2 py-0.5 text-xs font-medium border",
                   movie.isAvailable
                     ? "border-success/40 bg-success/10 text-success"
                     : "border-border bg-surface text-text-secondary"
                 )}>
-                  {movie.isAvailable ? "Disponible" : "Non disponible"}
+                  {movie.isAvailable ? "Available" : "Unavailable"}
                 </span>
               </DetailRow>
               {movie.score != null && (
-                <DetailRow label="Score SF">
+                <DetailRow label="SF Score">
                   <span className="font-bold text-secondary">{(movie.score * 100).toFixed(0)}%</span>
                 </DetailRow>
               )}
@@ -286,7 +286,7 @@ export default function MovieDetailPage() {
                 </DetailRow>
               )}
               {(movie.directors?.length ?? 0) > 0 && (
-                <DetailRow label={movie.directors!.length > 1 ? "Réalisateurs" : "Réalisateur"}>
+                <DetailRow label={movie.directors!.length > 1 ? "Directors" : "Director"}>
                   {movie.directors!.join(", ")}
                 </DetailRow>
               )}
